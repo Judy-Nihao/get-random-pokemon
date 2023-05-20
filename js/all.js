@@ -5,6 +5,7 @@
 //  id 25 是皮卡丘
 // https://pokeapi.co/api/v2/pokemon/25 
 
+
 //屬性主題色
 const typeColor = {
     bug: "#26de81",
@@ -27,9 +28,12 @@ const typeColor = {
 
 
 const url = "https://pokeapi.co/api/v2/pokemon/"
+const quoteUrl = "https://pokeapi.co/api/v2/pokemon-species/"
 const card = document.querySelector("#card");
+const cardBefore = window.getComputedStyle(card, "::before");
 const btn = document.querySelector("#btn");
 const download = document.querySelector(".download");
+let pokeNameTC= []; 
 
 function getPokeData(){
     // 產生介於 1~150 之間的隨機整數當作id  
@@ -42,24 +46,60 @@ function getPokeData(){
     // 結合 pokeapi 和 id 組出每一隻寶可夢的的專屬請求網址
     const finalUrl = url + id;
     // console.log(finalUrl);
-
+    const finalQuoteUrl = quoteUrl + id;
+    
+    //取得寶可夢資料
     axios
     .get(finalUrl)
     .then((res) => {
         const pokemonData = res.data;
-        generateCard(pokemonData);
+        generateCard(pokemonData, id);
     })
     .catch((err) => {
         console.log(err);
     });
 
+    //取得同一隻寶可夢的敘述
+    axios
+    .get(finalQuoteUrl)
+    .then((res) => {
+        const quote = res.data;
+        getQuote(quote);
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+}
+
+
+
+
+//取得同一隻寶可夢敘述
+function getQuote(quote){
+    let entryArr = quote.flavor_text_entries;
+
+    //找到中文的敘述是在索引值第幾個
+    let result = entryArr.map(function(item, index) {
+        return item.language.name;
+    }).indexOf('zh-Hant');
+    // console.log(result);
+
+    console.log(entryArr[result].flavor_text);
+    let entryText = entryArr[result].flavor_text;
+    
+    card.setAttribute("data-entryText", entryText)
+
+    //偽元素不存在於DOM上，雖然可以讀取到它的content的值，但是無法直接操作偽元素
+    //檢查是否成功替換 content 的值
+    console.log(cardBefore.getPropertyValue("content"));
+
 }
 
 
 // 渲染寶可夢卡片
-function generateCard(data){
+function generateCard(data,id){
     //抓取必要資料並存進變數中
-    console.log(data);
+    // console.log(data);
     const hp = data.stats[0].base_stat;
     const imgSrc = data.sprites.other.dream_world.front_default;
     //寶可夢字母首字大寫：只對第一個字母轉大寫，從第二個字母開始的剩餘字母，則用slice(索引值)淺拷貝一個陣列出來再拼接回去
@@ -70,7 +110,7 @@ function generateCard(data){
     
     //根據寶可夢的「第一個」屬性，對照相同屬性名稱的卡片主題色
     const themeColor = typeColor[data.types[0].type.name];
-    console.log(themeColor)
+    // console.log(themeColor)
     
     card.innerHTML = `
     <p class="hp">
@@ -78,7 +118,7 @@ function generateCard(data){
         ${hp}
     </p>    
     <img src="${imgSrc}" alt="pokemon pic" >
-    <h2 class="poke-name">${pokeName}</h2>
+    <h2 class="poke-name" data-pokemonId="${id}">${pokeName}</h2>
     <div class="types">
     </div>
     <div class="stats">
@@ -102,7 +142,41 @@ function generateCard(data){
 
     //用抓到的屬性色碼改變卡片背景漸層色
     styleCard(themeColor);
+
+
+    // 取得寶可夢中文名稱
+    // 先渲染出來卡片之後，才去抓當下寶可夢的 id 來用
+    // 因為這個若放在最前面的getPokeData()子裡面執行，英文的資料要去外部叫，中文的名單是在本地端會比較快，
+    // 速度差會導致卡片還沒渲染出來，就想要用 querySelector 找元素，會找不到 DOM元素，這樣比對名單會出錯。
+   axios
+   .get("js/zh-hant.json")
+   .then((res) => {
+       nameTC = res.data;
+       createChinese(nameTC);
+   })
+   .catch((err) => {
+       console.log(err);
+   });
 }
+
+// 名單陣列索引值是從0開始，但是寶可夢清單是從1號開始排
+// 名單索引值 0 是妙蛙種子，妙蛙種子 data-pokemonId 是 1
+// 所以要取中文名稱的陣列名單時，索引值要 id-1 才會是正確的對象名稱
+function createChinese(names){
+    let pokeNameTC = document.createElement("H2")
+    pokeNameTC.className = "pokeNameTC";
+    let pokeNameEN = document.querySelector(".poke-name");
+    let nameID = pokeNameEN.getAttribute("data-pokemonId");
+    console.log(nameID);
+    console.log(names[nameID-1])
+    let name = names[nameID-1]
+    pokeNameTC.textContent = name;
+    pokeNameEN.after(pokeNameTC);
+}
+
+
+
+
 
 // type 是用 createElement 處理，如果只有1個type就只會生出1個span
 // 產生的 span 再直接加到 html 序列內，但是注意順序，必須要 card.innerHTML 先產生，選擇器才找得到 class="types" 元素
@@ -110,7 +184,7 @@ function appendTypes(types){
     types.forEach( item => {
         let span = document.createElement("SPAN");
         span.textContent = item.type.name;
-        console.log(span);
+        // console.log(span);
         document.querySelector(".types").appendChild(span);
     })
 };
@@ -125,6 +199,11 @@ function styleCard(color){
         });
 };
 
+
+
+card.addEventListener("click", ()=>{
+    card.classList.toggle("active");
+})
 
 //按鈕點擊觸發隨機寶可夢產生
 btn.addEventListener("click", getPokeData);
@@ -146,18 +225,6 @@ function block_capture() {
       a.click();
     });
   }  
-
-// function block_capture() {
-//     html2canvas(document.querySelector("#card"), {
-//         onrendered: function(canvas) {
-//           // document.body.appendChild(canvas);
-//           return Canvas2Image.saveAsPNG(canvas);
-//         }
-//       });
-//   }  
-
-
-
 
 
 //DOM只要一載入好也會先觸發一次隨機寶可夢產生

@@ -6,16 +6,24 @@
   font-family: "Open Sans", "Noto Sans TC", "Source Code Pro", monospace, sans-serif;
 }
 
+html {
+  width: 100%;
+}
+
 body {
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
   background-color: #F3EEDD;
+  padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .container {
+  position: relative;
   width: 350px;
+  perspective: 1000px;
 }
 
 .card {
@@ -25,6 +33,35 @@ body {
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
   border: 1px solid lightgrey;
   border-radius: 10px;
+  transform-style: preserve-3d;
+  transition: transform 0.5s linear;
+  cursor: pointer;
+}
+
+.card.active {
+  transform: rotateY(180deg);
+}
+
+.card::before {
+  content: attr(data-entryText);
+  position: absolute;
+  background-color: black;
+  color: white;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  border-radius: 10px;
+  z-index: 1;
+  opacity: 0;
+  transform: rotateY(-180deg);
+  transition: transform 0.5s linear, opacity 0.3s linear 0.2s;
+}
+
+.card.active::before {
+  opacity: 0.9;
 }
 
 .card img {
@@ -50,6 +87,12 @@ body {
   text-align: center;
   font-weight: 700;
   font-size: 28px;
+}
+
+.pokeNameTC {
+  text-align: center;
+  font-size: 20px;
+  margin-top: 5px;
 }
 
 .types {
@@ -89,14 +132,14 @@ body {
 
 .generate:active .text-gotcha {
   color: black;
-  scale: 1.5;
+  scale: 1.25;
 }
 
 .text-gotcha {
   font-family: "Source Code Pro";
   font-style: italic;
   font-size: 24px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.5px;
   text-align: center;
   padding: 4px 8px;
@@ -164,8 +207,21 @@ body {
   display: block;
   margin: 0 auto;
   margin-top: 20px;
-  padding: 6px 8px;
-  border: 1px solid dimgrey;
-  border-radius: 4px;
+  padding: 10px 14px;
+  font-size: 10px;
+  border: none;
+  border-radius: 20px;
+  background-color: white;
   cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+.download i {
+  position: relative;
+  top: 3px;
+  font-size: 16px;
+  margin-right: 8px;
+}
+.download:hover {
+  background-color: #6839CE;
+  color: white;
 }/*# sourceMappingURL=style.css.map */
