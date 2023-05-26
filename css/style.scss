@@ -7,11 +7,6 @@
     font-family: "Open Sans", "Noto Sans TC", "Source Code Pro", monospace, sans-serif;
 }
 
-// @mixin size($w, $h){
-//     width: $w;
-//     height: $h;
-// }
-
 html{
     width: 100%;
 }
@@ -47,33 +42,11 @@ body{
     cursor: pointer;
 }
 
+//卡片翻面
 .card.active{
+    -webkit-transform: rotateY(180deg);
     transform: rotateY(180deg);
 }
-
-.card::before{
-    content: attr(data-entryText);
-    position: absolute;
-    background-color: black;
-    color: white;
-    left: 0;
-    top: 0;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 40px;
-    border-radius: 10px;
-    z-index: 1;
-    opacity: 0;
-    transform: rotateY(-180deg);
-    transition: transform .5s linear, opacity .3s linear 0.2s;
-}
-
-.card.active::before{
-    opacity: 0.9;
-}
-
-
 
 .card img{
     position: relative;
@@ -83,6 +56,49 @@ body{
     margin: 20px auto;
     margin-bottom: 20px;
 }
+
+.card .poke-entry{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: white;
+    padding: 0 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    z-index: 1;
+    -webkit-transform: rotateY(-180deg);
+    transform: rotateY(-180deg);
+    transition: transform 0.5s linear, opacity 0.3s linear;
+}
+
+.card .poke-entry.active{
+    opacity: 1;
+}
+
+.card .poke-entry::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0;
+    z-index: -1;
+}
+
+
+.card .poke-entry.active::before{
+    opacity: 0.9;
+}
+
+
+
+
 
 .hp{
     width: 80px;

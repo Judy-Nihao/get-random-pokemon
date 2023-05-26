@@ -26,7 +26,7 @@ const typeColor = {
     water: "#0190FF",
   };
 
-
+//寶可夢基本資料和寶可夢小敘述是2個不同的 Endpoint
 const url = "https://pokeapi.co/api/v2/pokemon/"
 const quoteUrl = "https://pokeapi.co/api/v2/pokemon-species/"
 const card = document.querySelector("#card");
@@ -47,19 +47,19 @@ function getPokeData(){
     const finalUrl = url + id;
     // console.log(finalUrl);
     const finalQuoteUrl = quoteUrl + id;
-    
-    //取得寶可夢資料
+ 
+    //========= 取得寶可夢英文資料 =========
     axios
     .get(finalUrl)
     .then((res) => {
         const pokemonData = res.data;
-        generateCard(pokemonData, id);
-    })
+        generateCard(pokemonData, id);    
+        })
     .catch((err) => {
         console.log(err);
     });
 
-    //取得同一隻寶可夢的敘述
+    // ========= 取得同一隻寶可夢的敘述 =========
     axios
     .get(finalQuoteUrl)
     .then((res) => {
@@ -71,9 +71,6 @@ function getPokeData(){
     });
 }
 
-
-
-
 //取得同一隻寶可夢敘述
 function getQuote(quote){
     let entryArr = quote.flavor_text_entries;
@@ -82,17 +79,10 @@ function getQuote(quote){
     let result = entryArr.map(function(item, index) {
         return item.language.name;
     }).indexOf('zh-Hant');
-    // console.log(result);
 
-    console.log(entryArr[result].flavor_text);
     let entryText = entryArr[result].flavor_text;
-    
-    card.setAttribute("data-entryText", entryText)
-
-    //偽元素不存在於DOM上，雖然可以讀取到它的content的值，但是無法直接操作偽元素
-    //檢查是否成功替換 content 的值
-    console.log(cardBefore.getPropertyValue("content"));
-
+ 
+    card.setAttribute("data-entryText", entryText);
 }
 
 
@@ -110,9 +100,9 @@ function generateCard(data,id){
     
     //根據寶可夢的「第一個」屬性，對照相同屬性名稱的卡片主題色
     const themeColor = typeColor[data.types[0].type.name];
-    // console.log(themeColor)
     
     card.innerHTML = `
+    <p class="poke-entry"></p>
     <p class="hp">
         <span>HP</span>
         ${hp}
@@ -136,17 +126,15 @@ function generateCard(data,id){
         </div>
     </div>
     `;
-
     //因為types 不見得每隻都有2個，獨立抽出來另外處理
     appendTypes(data.types);
 
     //用抓到的屬性色碼改變卡片背景漸層色
     styleCard(themeColor);
 
-
-    // 取得寶可夢中文名稱
-    // 先渲染出來卡片之後，才去抓當下寶可夢的 id 來用
-    // 因為這個若放在最前面的getPokeData()子裡面執行，英文的資料要去外部叫，中文的名單是在本地端會比較快，
+    // 取得對應的寶可夢中文名稱
+    // 先渲染出來卡片之後，才去抓 html 上面的的寶可夢 id 來用
+    // 這組 axios 若放在最前面的 getPokeData()裡面執行，由於英文資料要去外部叫，中文名單則是在本地端，中文會比較快出現，
     // 速度差會導致卡片還沒渲染出來，就想要用 querySelector 找元素，會找不到 DOM元素，這樣比對名單會出錯。
    axios
    .get("js/zh-hant.json")
@@ -175,16 +163,12 @@ function createChinese(names){
 }
 
 
-
-
-
-// type 是用 createElement 處理，如果只有1個type就只會生出1個span
+// 寶可夢屬性，type 是用 createElement 處理，如果只有1個 type 就只會生出1個span
 // 產生的 span 再直接加到 html 序列內，但是注意順序，必須要 card.innerHTML 先產生，選擇器才找得到 class="types" 元素
 function appendTypes(types){
     types.forEach( item => {
         let span = document.createElement("SPAN");
         span.textContent = item.type.name;
-        // console.log(span);
         document.querySelector(".types").appendChild(span);
     })
 };
@@ -199,27 +183,38 @@ function styleCard(color){
         });
 };
 
-
-
+// 卡片點擊後就翻面＋把寶可夢敘述 Entry Text 顯示在背面
 card.addEventListener("click", ()=>{
     card.classList.toggle("active");
+    card.firstElementChild.textContent = card.getAttribute("data-entryText");
+    card.firstElementChild.classList.toggle("active");
+
+    console.log(card);
+    console.log(card.firstElementChild);
 })
 
-//按鈕點擊觸發隨機寶可夢產生
-btn.addEventListener("click", getPokeData);
+//按鈕點擊隨機產生一隻寶可夢＋若卡片處於背面就把卡片翻回正面
+btn.addEventListener("click", function(){
+    getPokeData();
+    if(card.classList.contains("active")){
+        card.classList.remove("active");
+    }
+});
 
-
+// 下載寶可夢卡片
+// 備註：html2canvas 無法擷取到偽元素 content 的快照，所以內容不要放在偽元素裡面。
 download.addEventListener("click", block_capture);
 
 function block_capture() {
-    html2canvas(document.querySelector("#card"),{
-        allowTaint:false,
+     html2canvas(document.querySelector("#card"),{
+        letterRendering: true,
+        allowTaint:false, //要加上這兩條屬性才抓得到寶可夢角色圖片，因為圖片是跨網域載入的
         useCORS	:true
     })
     .then(function (canvas) {
       a = document.createElement("a");
       a.href = canvas
-        .toDataURL("image/jpeg", 1)
+        .toDataURL("image/jpeg", 1) //數字參數是quality圖片品質，1是最高
         .replace("image/jpeg", "image/octet-stream");
       a.download = "pokemonCard.jpg";
       a.click();
