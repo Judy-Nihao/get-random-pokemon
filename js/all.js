@@ -9,7 +9,7 @@
 //屬性主題色
 const typeColor = {
     bug: "#26de81",
-    dragon: "#ffeaa7",
+    dragon: "#fcde7e",
     electric: "#fed330",
     fairy: "#FF0069",
     fighting: "#30336b",
@@ -41,7 +41,7 @@ function getPokeData(){
     // floor 會取最接近的小於或等於整數
     // 0.00001 會變成 0，0+1=1
     // 149.999 會變成 149，149+1=150
-    let id = Math.floor(Math.random() * 150) + 1;
+    let id = Math.floor(Math.random() * 300) + 1;
     // console.log(id);
     // 結合 pokeapi 和 id 組出每一隻寶可夢的的專屬請求網址
     const finalUrl = url + id;
@@ -78,11 +78,21 @@ function getQuote(quote){
     //找到中文的敘述是在索引值第幾個
     let result = entryArr.map(function(item, index) {
         return item.language.name;
-    }).indexOf('zh-Hant');
+    }).indexOf("zh-Hant");
 
-    let entryText = entryArr[result].flavor_text;
- 
+    let entryText;
+
+    if(result == -1){
+        entryText = "關於這隻寶可夢還有許多未知"
+    }else{
+        entryText = entryArr[result].flavor_text;
+    }
+
+    // let entryText = entryArr[result].flavor_text;
+
     card.setAttribute("data-entryText", entryText);
+    //如果遇到 flavor_text_entries 資料為空[]的狀態，由於沒有任何敘述可以尋找，map()方法會回傳空陣列[]，indexOf()找不到"zh-Hant"，回傳 -1，就填入 if 條件的文字
+    //如果遇到 flavor_text_entries 不為空，但是剛好這隻寶可夢沒有中文敘述，indexOf()找不到"zh-Hant"會回傳 -1，就填入 if 條件的文字。
 }
 
 
@@ -91,7 +101,8 @@ function generateCard(data,id){
     //抓取必要資料並存進變數中
     // console.log(data);
     const hp = data.stats[0].base_stat;
-    const imgSrc = data.sprites.other.dream_world.front_default;
+    // 有些寶可夢沒有 dream_world 版本的圖片，路徑是 null，此時就改採用另一個物件屬性的圖片路徑
+    const imgSrc = data.sprites.other.dream_world.front_default || data.sprites.other.official-artwork.front_default;
     //寶可夢字母首字大寫：只對第一個字母轉大寫，從第二個字母開始的剩餘字母，則用slice(索引值)淺拷貝一個陣列出來再拼接回去
     const pokeName = data.name[0].toUpperCase() + data.name.slice(1);
     const statAttack = data.stats[1].base_stat;

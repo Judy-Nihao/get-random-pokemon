@@ -5,6 +5,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "Open Sans", "Noto Sans TC", "Source Code Pro", monospace, sans-serif;
+    // outline: 1px solid red;
 }
 
 html{
@@ -51,8 +52,7 @@ body{
 .card img{
     position: relative;
     display: block;
-    width: 240px;
-    min-height: 200px;
+    max-width: 240px;
     margin: 20px auto;
     margin-bottom: 20px;
 }
@@ -73,7 +73,7 @@ body{
     z-index: 1;
     -webkit-transform: rotateY(-180deg);
     transform: rotateY(-180deg);
-    transition: transform 0.5s linear, opacity 0.3s linear;
+    transition-delay: 0; //轉回正面時沒有延遲
 
     .img-wrap{
         display: flex;
@@ -85,12 +85,13 @@ body{
         img{
             object-fit: contain;
             margin: 0;
-            width: 25%;
+            width: 65px;
         }
     }
 }
 
 .card .poke-entry.active{
+    transition: opacity 0.3s linear 0.3s, transform 0.3s linear; //轉到後面時，內容淡入會延遲一下，避免還沒翻過去文字就先出來
     opacity: 1;
 }
 
@@ -146,6 +147,7 @@ body{
         font-weight: 400;
         padding: 5px 20px;
         border-radius: 20px;
+        background-color: black;
         color: white;
     }
 }
