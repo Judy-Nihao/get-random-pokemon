@@ -261,6 +261,7 @@ img {
   border-radius: 20px;
   background-color: white;
   cursor: pointer;
+  margin-bottom: 25px;
   transition: all 0.2s ease-out;
 }
 .download i {
