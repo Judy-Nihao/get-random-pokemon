@@ -36,11 +36,11 @@ const download = document.querySelector(".download");
 let pokeNameTC= []; 
 
 function getPokeData(){
-    // 產生介於 1~150 之間的隨機整數當作id  
-    // random 會從 0~150之間隨機產生浮點數，包含 0 不包含 150
-    // floor 會取最接近的小於或等於整數
-    // 0.00001 會變成 0，0+1=1
-    // 149.999 會變成 149，149+1=150
+    // 產生介於 1~300 之間的隨機整數當作id  
+    // random 會從 0~300之間隨機產生浮點數，包含 0 不包含 300
+    // floor 會回傳「小於等於」所給數字的最接近整數
+    // 0.00001 會變成 0。0+1=1
+    // 299.999 會變成 299。299+1=300
     let id = Math.floor(Math.random() * 300) + 1;
     // console.log(id);
     // 結合 pokeapi 和 id 組出每一隻寶可夢的的專屬請求網址
@@ -173,14 +173,19 @@ function generateCard(data,id){
 // 名單索引值 0 是妙蛙種子，妙蛙種子 data-pokemonId 是 1
 // 所以要取中文名稱的陣列名單時，索引值要 id-1 才會是正確的對象名稱
 function createChinese(names){
+    // 在畫面上創造 h2 元素並給class
     let pokeNameTC = document.createElement("H2")
     pokeNameTC.className = "pokeNameTC";
+
+    // 抓取 DOM 上面的寶可夢 data-pokemonId
     let pokeNameEN = document.querySelector(".poke-name");
     let nameID = pokeNameEN.getAttribute("data-pokemonId");
-    console.log(nameID);
-    console.log(names[nameID-1])
+
+    // 寶可夢 id -1 才是正確的同一隻寶可夢中文清單索引值
     let name = names[nameID-1]
     pokeNameTC.textContent = name;
+    
+    // 把寶可夢中文添加在寶可夢英文後面
     pokeNameEN.after(pokeNameTC);
 }
 
@@ -236,8 +241,8 @@ download.addEventListener("click", block_capture);
 
 function block_capture() {
      html2canvas(document.querySelector("#card"),{
-        letterRendering: true,
-        allowTaint:false, //要加上這兩條屬性才抓得到寶可夢角色圖片，因為圖片是跨網域載入的
+        //要加上下面這兩條屬性才抓得到寶可夢角色圖片，因為圖片是跨網域載入的
+        allowTaint:false, 
         useCORS	:true
     })
     .then(function (canvas) {
