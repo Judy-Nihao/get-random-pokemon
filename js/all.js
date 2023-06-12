@@ -41,7 +41,7 @@ function getPokeData(){
     // floor 會回傳「小於等於」所給數字的最接近整數
     // 0.00001 會變成 0。0+1=1
     // 299.999 會變成 299。299+1=300
-    let id = Math.floor(Math.random() * 300) + 1;
+    let id = Math.floor(Math.random() * 250) + 1;
     // console.log(id);
     // 結合 pokeapi 和 id 組出每一隻寶可夢的的專屬請求網址
     const finalUrl = url + id;
