@@ -1,20 +1,25 @@
 # 寶可夢隨機卡片生成器 Get A Random Pokemon Card
 
-## 實作網址
+## 實作網址 Live Demo
 gh-pages
 https://judy-nihao.github.io/get-random-pokemon
 
 GitHub Repo
 https://github.com/Judy-Nihao/get-random-pokemon
 
-## 實現功能
+## 實現功能 Features
 - 點擊寶貝球隨機產生一隻寶可夢
 - 卡片背景色隨寶可夢屬性變化
 - 點擊卡片會翻轉並顯示寶可夢小敘述與小動圖
 - 點擊下載按鈕可以下載寶可夢卡片
+- Click the Poké Ball to generate a random Pokémon
+- Card background color changes based on the Pokémon's type
+- Click the card to flip it and reveal a description and animated GIF
+- Click the download button to save the Pokémon card
 
-## 實作紀錄： Get A Random Pokemon Card
+## 實作紀錄： Development Notes
 寶可夢是小時候的回憶(以前的翻譯是神奇寶貝)，搜尋開放 API 時發現原來有 [PokéAPI](https://pokeapi.co/) 可以使用真是太帥了，參考幾種教學分享，最後使用 2 種 API，結合另 1 份寶可夢中文翻譯 JSON 檔，擷取寶可夢英文名稱、大張圖像、中文名稱、中文敘述與 GIF 小動圖等資料，試著做出可以隨機渲染一隻寶可夢，並且可以點擊下載卡片收藏的寶可夢卡片產生器。
+Pokémon holds a special place in my childhood memories. While exploring public APIs, I discovered [PokéAPI](https://pokeapi.co/) — and knew I had to build something with it. Drawing from several tutorials, I combined two APIs alongside a Pokémon Chinese translation JSON file to pull each Pokémon's English name, full artwork, Chinese name, description, and animated GIF. The result is a random Pokémon card generator where you can collect and download your favorites.
 
 ![image](https://hackmd.io/_uploads/BJxrOrQLh.png)
 ![image](https://hackmd.io/_uploads/rJtS_BmU2.png)
