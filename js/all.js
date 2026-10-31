@@ -77,8 +77,8 @@ function getQuote(quote){
 
     //找到中文的敘述是在索引值第幾個
     let result = entryArr.map(function(item, index) {
-        return item.language.name;
-    }).indexOf("zh-Hant");
+        return item.language.name.toLowerCase();
+    }).indexOf("zh-hant");
 
     let entryText;
 
@@ -258,4 +258,3 @@ function block_capture() {
 
 //DOM只要一載入好也會先觸發一次隨機寶可夢產生
 window.addEventListener("load", getPokeData);
-

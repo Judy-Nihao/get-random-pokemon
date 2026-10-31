@@ -243,7 +243,7 @@ function appendTypes(types){
 {
 "flavor_text": "最近發表了聚集大量皮卡丘\n來建造發電廠的計畫。",
 "language": {
-"name": "zh-Hant",
+"name": "zh-hant",
 "url": "https://pokeapi.co/api/v2/language/4/"
 },
 "version": {
@@ -269,9 +269,9 @@ function appendTypes(types){
 
 首先用`map()`對整體陣列進行篩選，map 括號內放一個 function 作為篩選步驟，篩選條件是，把每個物件內的，language屬性的name屬性的值，抽出來，return 組出一個新陣列。
 
-這個新陣列內容可能會長成這樣子：`["en", "fr", "de", …"zh-Hant",…]`
+這個新陣列內容可能會長成這樣子：`["en", "fr", "de", …"zh-hant",…]`
 
-再用 indexOf()方法，去新陣列中找出`"zh-Hant"` 是在這個新陣列中的索引第幾？
+由於 API 回傳的語言代碼是小寫 `zh-hant`，比對前先統一轉成小寫，再用 `indexOf()` 找出它在新陣列中的索引：
 
 最後把`indexOf()`回傳的索引數值，存進變數 result 中，
 
@@ -285,8 +285,8 @@ function getQuote(quote){
 
     //找到中文的敘述是在索引值第幾個
     let result = entryArr.map(function(item, index) {
-        return item.language.name;
-    }).indexOf("zh-Hant");
+        return item.language.name.toLowerCase();
+    }).indexOf("zh-hant");
     
     //把索引值帶入原始陣列
     let entryText = entryArr[result].flavor_text;
