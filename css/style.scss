@@ -71,6 +71,9 @@ img {
   font-weight: 800;
   text-align: left;
 }
+.intro-title-mobile {
+  display: none;
+}
 .card-stage {
   grid-area: stage;
   position: relative;
@@ -135,11 +138,14 @@ img {
     font-size: 14px;
   }
   .intro h1 {
-    font-size: clamp(16px, 5.5vw, 22px);
+    font-size: clamp(14px, 5.5vw, 22px);
+  }
+  .intro-title-desktop {
+    display: none;
+  }
+  .intro-title-mobile {
+    display: block;
     white-space: nowrap;
-    br {
-      display: none;
-    }
   }
 }
 
