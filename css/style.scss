@@ -41,7 +41,7 @@ img {
 .intro-panel {
   grid-area: intro-panel;
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   align-items: center;
   gap: 24px;
   min-width: 0;
