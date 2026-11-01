@@ -28,11 +28,11 @@ img {
 }
 
 .container {
-  width: 100%;
-  max-width: 992px;
+  width: fit-content;
+  max-width: min(992px, 100%);
   padding-inline: 32px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 350px;
+  grid-template-columns: minmax(0, max-content) 350px;
   grid-template-areas: "intro-panel stage";
   column-gap: 24px;
   row-gap: 24px;
@@ -56,7 +56,7 @@ img {
   color: #454135;
 }
 .intro {
-  width: 100%;
+  align-self: stretch;
   text-align: left;
 }
 .intro h1 {
@@ -79,6 +79,7 @@ img {
 }
 @media (max-width: 800px) {
   .container {
+    width: 100%;
     max-width: 382px;
     padding-inline: 16px;
     grid-template-columns: minmax(0, 1fr);
