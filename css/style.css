@@ -407,7 +407,7 @@ img {
   box-shadow: inset -10px 0px 0 0px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(55, 48, 34, 0.12);
   cursor: pointer;
   transition: transform 180ms ease-out;
-  animation: ball-float 3s ease-in-out infinite;
+  animation: ball-float 1.8s ease-in-out infinite;
 }
 .btn:hover {
   transform: translateY(-3px) rotate(-8deg);
@@ -475,7 +475,7 @@ img {
     translate: 0 0;
   }
   50% {
-    translate: 0 -7px;
+    translate: 0 -10px;
   }
 }
 .btn:hover, .btn:focus-visible {
