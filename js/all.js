@@ -30,12 +30,14 @@ const typeColor = {
 const url = "https://pokeapi.co/api/v2/pokemon/"
 const quoteUrl = "https://pokeapi.co/api/v2/pokemon-species/"
 const card = document.querySelector("#card");
-const cardBefore = window.getComputedStyle(card, "::before");
 const btn = document.querySelector("#btn");
 const download = document.querySelector(".download");
 let pokeNameTC= []; 
+let latestRequest = 0;
 
 function getPokeData(){
+    const request = ++latestRequest;
+    card.setAttribute("data-entryText", "關於這隻寶可夢還有許多未知");
     // 產生介於 1~300 之間的隨機整數當作id  
     // random 會從 0~300之間隨機產生浮點數，包含 0 不包含 300
     // floor 會回傳「小於等於」所給數字的最接近整數
@@ -52,6 +54,7 @@ function getPokeData(){
     axios
     .get(finalUrl)
     .then((res) => {
+        if (request !== latestRequest) return;
         const pokemonData = res.data;
         generateCard(pokemonData, id);    
         })
@@ -63,6 +66,7 @@ function getPokeData(){
     axios
     .get(finalQuoteUrl)
     .then((res) => {
+        if (request !== latestRequest) return;
         const quote = res.data;
         getQuote(quote);
     })
@@ -91,6 +95,8 @@ function getQuote(quote){
     // let entryText = entryArr[result].flavor_text;
 
     card.setAttribute("data-entryText", entryText);
+    const description = card.querySelector(".poke-entry > p");
+    if (description) description.textContent = entryText;
     //如果遇到 flavor_text_entries 資料為空[]的狀態，由於沒有任何敘述可以尋找，map()方法會回傳空陣列[]，indexOf()找不到"zh-Hant"，回傳 -1，就填入 if 條件的文字
     //如果遇到 flavor_text_entries 不為空，但是剛好這隻寶可夢沒有中文敘述，indexOf()找不到"zh-Hant"會回傳 -1，就填入 if 條件的文字。
 }
@@ -111,20 +117,20 @@ function generateCard(data,id){
     const gifFront = data.sprites.versions["generation-v"]["black-white"]["animated"]["front_default"];
     const gifBack = data.sprites.versions["generation-v"]["black-white"]["animated"]["back_default"]
 
-    console.log(gifFront);
-    console.log(gifBack);
     
     //根據寶可夢的「第一個」屬性，對照相同屬性名稱的卡片主題色
     const themeColor = typeColor[data.types[0].type.name];
     
     card.innerHTML = `
-    <div class="poke-entry">
+    <div class="card-rotator">
+    <div class="card-face poke-entry" aria-hidden="true">
         <p></p>
         <div class="img-wrap">
             <img src="${gifFront}" alt="">
             <img src="${gifBack}" alt="">
         </div>
     </div>
+    <div class="card-face card-front">
     <p class="hp">
         <span>HP</span>
         ${hp}
@@ -148,7 +154,10 @@ function generateCard(data,id){
             <p>速度</p>
         </div>
     </div>
+    </div>
+    </div>
     `;
+    setCardFlipped(false);
     //因為types 不見得每隻都有2個，獨立抽出來另外處理
     appendTypes(data.types);
 
@@ -221,7 +230,7 @@ function appendTypes(types){
 
 //用配對後的屬性色碼，去修改卡片背景色＋屬性span文字背景色
 function styleCard(color){
-    card.style.backgroundImage = `radial-gradient(circle at 50% 0%, ${color} 36%, white 36%)`
+    card.querySelector(".card-front").style.backgroundImage = `radial-gradient(circle at 50% 0%, ${color} 36%, white 36%)`
 
     card.querySelectorAll(".types span").forEach(
         (typeText) => {
@@ -230,26 +239,30 @@ function styleCard(color){
 };
 
 // 卡片點擊後就翻面＋把寶可夢敘述 Entry Text 顯示在背面
+function setCardFlipped(flipped){
+    card.classList.toggle("active", flipped);
+    const front = card.querySelector(".card-front");
+    const back = card.querySelector(".poke-entry");
+    if (!front || !back) return;
+    front.setAttribute("aria-hidden", String(flipped));
+    back.setAttribute("aria-hidden", String(!flipped));
+    card.setAttribute("aria-label", flipped ? "顯示寶可夢正面" : "顯示寶可夢背面");
+    back.querySelector("p").textContent = card.getAttribute("data-entryText") || "關於這隻寶可夢還有許多未知";
+}
+
 card.addEventListener("click", ()=>{
-    card.classList.toggle("active");
-    let pokeEntry = document.querySelector(".poke-entry");
-    let pokeEntryText = pokeEntry.querySelector("p");
-    pokeEntryText.textContent = card.getAttribute("data-entryText");
-    pokeEntry.classList.toggle("active");
+    if (card.querySelector(".card-front")) setCardFlipped(!card.classList.contains("active"));
+});
+card.addEventListener("keydown", (event)=>{
+    if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        card.click();
+    }
+});
 
-    console.log(card);
-    console.log(card.firstElementChild);
-})
-
-// 點擊按鈕，就隨機產生一隻寶可夢＋若卡片處於背面就把卡片翻回正面+立刻隱藏背面資訊
-// 因為手機點擊翻面時會有延遲，翻轉時會看到背面文字的鏡射狀態，乾脆用 JS 立刻隱藏
+// 抽卡時回到正面；舊請求完成時不覆蓋目前這一隻的資料。
 btn.addEventListener("click", function(){
-    if(card.classList.contains("active")){
-        card.classList.remove("active");
-    };    
-
-    let pokeEntry = document.querySelector(".poke-entry");
-    pokeEntry.style.visibility = "hidden";
+    setCardFlipped(false);
     getPokeData();
 });
 
@@ -259,13 +272,29 @@ btn.addEventListener("click", function(){
 download.addEventListener("click", block_capture);
 
 function block_capture() {
+     if (!card.querySelector(".card-front")) return;
+     const captureBack = card.classList.contains("active");
      html2canvas(document.querySelector("#card"),{
         //要加上下面這兩條屬性才抓得到寶可夢角色圖片，因為圖片是跨網域載入的
+        // 只在擷取副本攤平選定的表面，不影響畫面上的翻面動畫。
+        onclone: (clonedDocument) => {
+            const clone = clonedDocument.querySelector("#card");
+            clone.style.perspective = "none";
+            const rotator = clone.querySelector(".card-rotator");
+            rotator.style.transition = "none";
+            rotator.style.transform = "none";
+            clone.querySelectorAll(".card-face").forEach((face) => {
+                const visible = face.classList.contains("poke-entry") === captureBack;
+                face.style.display = visible ? "flex" : "none";
+                face.style.transform = "none";
+                face.style.backfaceVisibility = "visible";
+            });
+        },
         allowTaint:false, 
         useCORS	:true
     })
     .then(function (canvas) {
-      a = document.createElement("a");
+      const a = document.createElement("a");
       a.href = canvas
         .toDataURL("image/jpeg", 1) //數字參數是quality圖片品質，1是最高
         .replace("image/jpeg", "image/octet-stream");

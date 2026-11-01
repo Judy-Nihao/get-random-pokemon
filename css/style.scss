@@ -29,7 +29,6 @@ img{
 .container{
     position: relative;
     width: 350px;
-    perspective: 1000px;
     // outline: 1px solid red;
 }
 
@@ -50,27 +49,53 @@ img{
     position: relative;
     width: 100%;
     height: 640px;
+    perspective: 1200px;
+    cursor: pointer;
+}
+
+.card-rotator{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 600ms cubic-bezier(0.45, 0, 0.2, 1);
+}
+
+.card-face{
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
     padding: 30px 20px;
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     // 分層暖灰陰影：貼近卡片的細影，加上柔和的擴散陰影
     box-shadow:
         0 1px 2px rgba(99, 86, 58, 0.06),
         0 3px 8px rgba(99, 86, 58, 0.08),
         0 8px 20px rgba(99, 86, 58, 0.06);
-    border: 1px solid lightgrey;
-    // 兩個顏色百分比相同才能畫出乾淨邊界的圓形色塊，之後會用 JS去替換掉顏色
-    // background-image: radial-gradient(circle at 50% 0%, gold 36%, white 36%);
-    border-radius: 10px;
-    transform-style: preserve-3d;
-    transition: transform .5s linear;
-    cursor: pointer;
 }
 
-//卡片翻面
-.card.active{
-    -webkit-transform: rotateY(180deg);
+.card-front{
+    background-color: white;
+    transform: rotateY(0deg);
+}
+
+.card.active .card-rotator{
     transform: rotateY(180deg);
+}
+
+.card:focus-visible{
+    outline: 3px solid #63563a;
+    outline-offset: 5px;
+}
+
+@media (prefers-reduced-motion: reduce){
+    .card-rotator{
+        transition: none;
+    }
 }
 
 .card img{
@@ -82,7 +107,7 @@ img{
 }
 
 // 圖片下載前就保留空間，主圖尺寸不影響背面的 GIF。
-.card > .pokemon-image{
+.card-front > .pokemon-image{
     width: 100%;
     max-width: 240px;
     height: 220px;
@@ -90,13 +115,13 @@ img{
     object-fit: contain;
 }
 
-.card > .hp,
-.card > .types,
-.card > .stats{
+.card-front > .hp,
+.card-front > .types,
+.card-front > .stats{
     flex-shrink: 0;
 }
 
-.card > .stats{
+.card-front > .stats{
     margin-top: auto;
 }
 
@@ -112,11 +137,13 @@ img{
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    opacity: 0;
-    z-index: 1;
-    -webkit-transform: rotateY(-180deg);
-    transform: rotateY(-180deg);
-    transition-delay: 0; //轉回正面時沒有延遲
+    background-color: #202024;
+    transform: rotateY(180deg);
+
+    > p{
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
 
     .img-wrap{
         display: flex;
@@ -133,28 +160,6 @@ img{
     }
 }
 
-.card .poke-entry.active{
-    transition: opacity 0.3s linear 0.3s, transform 0.3s linear; //轉到後面時，內容淡入會延遲一下，避免還沒翻過去文字就先出來
-    opacity: 1;
-}
-
-.card .poke-entry::before{
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: black;
-    border-radius: 10px;
-    opacity: 0;
-    z-index: -1;
-}
-
-
-.card .poke-entry.active::before{
-    opacity: 0.9;
-}
 
 
 
