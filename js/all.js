@@ -34,6 +34,9 @@ const btn = document.querySelector("#btn");
 const download = document.querySelector(".download");
 let latestRequest = 0;
 let loading = false;
+let skeletonTimer;
+const status = document.querySelector("#load-status");
+const retry = document.querySelector("#retry");
 let namesPromise;
 const fallbackDescription = "關於這隻寶可夢還有許多未知";
 const missingImage = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="240" height="220" viewBox="0 0 240 220"><rect width="240" height="220" rx="24" fill="#eeeae0"/><text x="120" y="130" text-anchor="middle" font-size="64" fill="#63563a">?</text></svg>');
@@ -63,10 +66,31 @@ function loadImage(source){
 
 function setLoading(value){
     loading = value;
+    clearTimeout(skeletonTimer);
+    if (value) {
+        status.textContent = "載入中…";
+        retry.hidden = true;
+        skeletonTimer = setTimeout(showSkeleton, card.querySelector(".card-front") ? 180 : 0);
+    } else {
+        card.classList.remove("is-loading");
+        card.querySelector(".card-skeleton")?.remove();
+    }
     card.setAttribute("aria-busy", String(value));
     btn.disabled = value;
     download.disabled = value || !card.querySelector(".card-front");
 }
+
+function showSkeleton(){
+    if (!loading) return;
+    const skeleton = document.createElement("div");
+    skeleton.className = "card-skeleton";
+    skeleton.setAttribute("aria-hidden", "true");
+    skeleton.innerHTML = '<div class="skeleton-hp skeleton-piece"></div><div class="skeleton-image skeleton-piece"></div><div class="skeleton-name skeleton-piece"></div><div class="skeleton-name short skeleton-piece"></div><div class="skeleton-types skeleton-piece"></div><div class="skeleton-stats"><span class="skeleton-piece"></span><span class="skeleton-piece"></span><span class="skeleton-piece"></span></div>';
+    card.appendChild(skeleton);
+    card.classList.add("is-loading");
+}
+
+retry.addEventListener("click", getPokeData);
 
 async function getPokeData(){
     if (loading) return;
@@ -92,8 +116,13 @@ async function getPokeData(){
             : null;
         card.setAttribute("data-entryText", description || fallbackDescription);
         generateCard(data, id, names.status === "fulfilled" ? names.value : [], image || missingImage);
+        status.textContent = !image ? "圖片暫時無法載入，已顯示替代圖。" : names.status !== "fulfilled" ? "中文名稱暫時無法載入。" : "";
     } catch (error) {
-        if (request === latestRequest) console.error("Unable to load Pokemon", error);
+        if (request === latestRequest) {
+            status.textContent = "載入失敗，請再試一次。";
+            retry.hidden = false;
+            if (!card.querySelector(".card-front")) card.innerHTML = '<div class="card-empty">暫時找不到寶可夢<br>請點選重試</div>';
+        }
     } finally {
         if (request === latestRequest) setLoading(false);
     }

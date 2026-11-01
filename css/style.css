@@ -76,6 +76,108 @@ img {
   transform: rotateY(0deg);
 }
 
+.is-loading .card-rotator {
+  visibility: hidden;
+}
+
+.card-skeleton,
+.card-empty {
+  position: absolute;
+  inset: 0;
+  padding: 30px 20px;
+  border-radius: 10px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-empty {
+  justify-content: center;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.skeleton-piece {
+  background: #e8e6df;
+  border-radius: 8px;
+  animation: skeleton-pulse 1.6s ease-in-out infinite alternate;
+}
+
+.skeleton-hp {
+  width: 80px;
+  height: 38px;
+  align-self: flex-end;
+}
+
+.skeleton-image {
+  width: 100%;
+  max-width: 240px;
+  height: 220px;
+  margin: 20px 0;
+}
+
+.skeleton-name {
+  width: 75%;
+  height: 25px;
+  margin: 20px 0;
+}
+
+.skeleton-name.short {
+  width: 45%;
+  height: 20px;
+  margin: 12px 0;
+}
+
+.skeleton-types {
+  width: 100px;
+  height: 28px;
+  margin-top: 28px;
+}
+
+.skeleton-stats {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: auto;
+}
+.skeleton-stats span {
+  width: 40px;
+  height: 44px;
+}
+
+@keyframes skeleton-pulse {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.load-status {
+  min-height: 24px;
+  font-size: 14px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.retry {
+  display: block;
+  margin: 8px auto;
+  min-height: 44px;
+  padding: 8px 20px;
+  cursor: pointer;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-piece {
+    animation: none;
+  }
+}
 .card.active .card-rotator {
   transform: rotateY(180deg);
 }
