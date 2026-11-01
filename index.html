@@ -56,22 +56,14 @@
           <p class="intro-translation">點擊抽一隻寶可夢</p>
           <h1 lang="en">Click to<br />Get a Pokemon</h1>
         </header>
-        <section class="controls" aria-label="卡片操作">
-          <div class="generate">
-            <button
-              id="btn"
-              class="btn"
-              type="button"
-              aria-label="Get a random Pokemon"
-              disabled
-            >
-              <span class="ball-button" aria-hidden="true"></span>
-            </button>
-          </div>
-          <p id="load-status" class="sr-only" role="status" aria-live="polite">
-            載入中…
-          </p>
-        </section>
+        <button
+          class="download"
+          type="button"
+          aria-label="下載卡片正反面圖片"
+          disabled
+        >
+          <i class="bx bx-download" aria-hidden="true"></i><span>Download</span>
+        </button>
       </section>
       <section class="card-stage" aria-label="寶可夢卡片">
         <button
@@ -92,14 +84,22 @@
           aria-busy="true"
           data-entryText="關於這隻寶可夢還有許多未知"
         ></div>
-        <button
-          class="download"
-          type="button"
-          aria-label="下載卡片正反面圖片"
-          disabled
-        >
-          <i class="bx bx-download" aria-hidden="true"></i><span>Download</span>
-        </button>
+        <section class="controls" aria-label="卡片操作">
+          <div class="generate">
+            <button
+              id="btn"
+              class="btn"
+              type="button"
+              aria-label="Get a random Pokemon"
+              disabled
+            >
+              <span class="ball-button" aria-hidden="true"></span>
+            </button>
+          </div>
+          <p id="load-status" class="sr-only" role="status" aria-live="polite">
+            載入中…
+          </p>
+        </section>
       </section>
     </main>
   </body>

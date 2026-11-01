@@ -41,9 +41,9 @@ img {
 .intro-panel {
   grid-area: intro-panel;
   display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  gap: 42px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 28px;
   min-width: 0;
 }
 .intro-translation {
@@ -58,7 +58,6 @@ img {
   letter-spacing: 1px;
 }
 .intro {
-  flex: 1;
   min-width: 0;
   text-align: left;
 }
@@ -75,17 +74,16 @@ img {
   min-width: 0;
 }
 .controls {
-  flex: 0 0 120px;
+  margin: 24px auto 0;
   text-align: center;
   width: 120px;
   max-width: 100%;
 }
+.intro-panel > .download {
+  align-self: flex-start;
+  margin: 0;
+}
 @media (max-width: 800px) {
-  .intro-panel {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 36px;
-  }
   .container {
     width: 100%;
     max-width: 382px;
@@ -100,10 +98,6 @@ img {
   }
   .intro h1 {
     font-size: clamp(36px, 9vw, 48px);
-  }
-  .controls {
-    flex: none;
-    align-self: center;
   }
 }
 
