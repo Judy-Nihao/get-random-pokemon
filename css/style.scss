@@ -29,12 +29,12 @@ img {
 
 .container {
   width: 100%;
-  max-width: 1024px;
+  max-width: 992px;
   padding-inline: 32px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 350px;
   grid-template-areas: "intro-panel stage";
-  column-gap: clamp(32px, 4vw, 56px);
+  column-gap: 24px;
   row-gap: 24px;
   align-items: center;
 }
@@ -43,7 +43,7 @@ img {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 36px;
   min-width: 0;
 }
 .intro-translation {
