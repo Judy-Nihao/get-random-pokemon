@@ -38,6 +38,7 @@ img {
 .intro {
   grid-area: intro;
   align-self: end;
+  text-align: center;
 }
 
 .intro h1 {
@@ -57,7 +58,7 @@ img {
   grid-area: controls;
   align-self: start;
   text-align: center;
-  justify-self: start;
+  justify-self: center;
   width: 220px;
 }
 

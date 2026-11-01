@@ -36,7 +36,7 @@ img{
     row-gap: 24px;
     align-items: center;
 }
-.intro{ grid-area: intro; align-self: end; }
+.intro{ grid-area: intro; align-self: end; text-align: center; }
 .intro h1{
     font-size: clamp(48px, 5.8vw, 88px);
     line-height: 1.06;
@@ -45,7 +45,7 @@ img{
     font-weight: 800;
 }
 .card-stage{ grid-area: stage; min-width: 0; }
-.controls{ grid-area: controls; align-self: start; text-align: center; justify-self: start; width: 220px; }
+.controls{ grid-area: controls; align-self: start; text-align: center; justify-self: center; width: 220px; }
 @media (max-width: 800px){
     .container{
         max-width: 350px;
