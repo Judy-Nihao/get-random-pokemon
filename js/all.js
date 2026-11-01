@@ -304,17 +304,12 @@ btn.addEventListener("click", function(){
 // 備註：html2canvas 無法擷取到偽元素 content 的快照，所以內容不要放在偽元素裡面。
 download.addEventListener("click", block_capture);
 
-async function block_capture() {
-     if (loading || capturing || !card.querySelector(".card-front")) return;
-     capturing = true;
-     syncControls();
-     download.setAttribute("aria-busy", "true");
-     status.textContent = "正在準備下載…";
-     const captureBack = card.classList.contains("active");
-     try {
-     const canvas = await html2canvas(document.querySelector("#card"),{
-        //要加上下面這兩條屬性才抓得到寶可夢角色圖片，因為圖片是跨網域載入的
-        // 只在擷取副本攤平選定的表面，不影響畫面上的翻面動畫。
+async function captureCardFace(captureBack){
+    return html2canvas(card, {
+        allowTaint: false,
+        useCORS: true,
+        backgroundColor: null,
+        // 只攤平擷取副本；不改動畫面上的正反面狀態。
         onclone: (clonedDocument) => {
             const clone = clonedDocument.querySelector("#card");
             clone.style.perspective = "none";
@@ -326,27 +321,50 @@ async function block_capture() {
                 face.style.display = visible ? "flex" : "none";
                 face.style.transform = "none";
                 face.style.backfaceVisibility = "visible";
+                face.style.webkitBackfaceVisibility = "visible";
+                face.setAttribute("aria-hidden", String(!visible));
             });
-        },
-        allowTaint:false, 
-        useCORS	:true
+        }
     });
-      const a = document.createElement("a");
-      a.href = canvas
-        .toDataURL("image/jpeg", 1) //數字參數是quality圖片品質，1是最高
-        .replace("image/jpeg", "image/octet-stream");
-      a.download = "pokemonCard.jpg";
-      a.click();
-      status.textContent = "已送出下載。";
-     } catch (error) {
-         status.textContent = "下載失敗，請再試一次。";
-     } finally {
-         capturing = false;
-         download.removeAttribute("aria-busy");
-         syncControls();
-     }
-  }  
+}
 
+async function block_capture(){
+    if (loading || capturing || !card.querySelector(".card-front")) return;
+    capturing = true;
+    syncControls();
+    download.setAttribute("aria-busy", "true");
+    status.textContent = "正在準備正反面圖片…";
+    try {
+        await document.fonts.ready;
+        // 兩面都成功產生後才送出下載，避免第二面擷取失敗時只拿到第一面。
+        const front = await captureCardFace(false);
+        const back = await captureCardFace(true);
+        const name = card.querySelector(".poke-name span").textContent
+            .toLowerCase().replace(/[^a-z0-9-]/g, "-");
+        const images = [
+            {side: "front", canvas: front},
+            {side: "back", canvas: back}
+        ].map(({side, canvas}) => ({
+            filename: `pokemon-${name}-${side}.png`,
+            url: canvas.toDataURL("image/png")
+        }));
+        images.forEach(({filename, url}) => {
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        });
+        status.textContent = "已送出正反面下載；若瀏覽器詢問，請允許多個檔案下載。";
+    } catch (error) {
+        status.textContent = "圖片產生失敗，請再試一次。";
+    } finally {
+        capturing = false;
+        download.removeAttribute("aria-busy");
+        syncControls();
+    }
+}
 
 //DOM只要一載入好也會先觸發一次隨機寶可夢產生
 window.addEventListener("load", getPokeData);
