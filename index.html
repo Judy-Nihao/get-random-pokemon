@@ -52,6 +52,22 @@
     </aside>
     <main class="container">
       <section class="intro-panel" aria-label="取得寶可夢">
+        <section class="controls" aria-label="卡片操作">
+          <div class="generate">
+            <button
+              id="btn"
+              class="btn"
+              type="button"
+              aria-label="Get a random Pokemon"
+              disabled
+            >
+              <span class="ball-button" aria-hidden="true"></span>
+            </button>
+          </div>
+          <p id="load-status" class="sr-only" role="status" aria-live="polite">
+            載入中…
+          </p>
+        </section>
         <header class="intro">
           <p class="intro-translation">點擊抽一隻寶可夢</p>
           <h1 lang="en">Click to<br />Get a Pokemon</h1>
@@ -84,22 +100,6 @@
           aria-busy="true"
           data-entryText="關於這隻寶可夢還有許多未知"
         ></div>
-        <section class="controls" aria-label="卡片操作">
-          <div class="generate">
-            <button
-              id="btn"
-              class="btn"
-              type="button"
-              aria-label="Get a random Pokemon"
-              disabled
-            >
-              <span class="ball-button" aria-hidden="true"></span>
-            </button>
-          </div>
-          <p id="load-status" class="sr-only" role="status" aria-live="polite">
-            載入中…
-          </p>
-        </section>
       </section>
     </main>
   </body>
