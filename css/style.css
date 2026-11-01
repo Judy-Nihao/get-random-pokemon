@@ -29,10 +29,21 @@ img {
   max-width: 960px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 350px;
-  grid-template-areas: "intro stage" "controls stage";
+  grid-template-areas: "translation stage" "intro stage" "controls stage";
   column-gap: clamp(32px, 4vw, 56px);
   row-gap: 24px;
   align-items: center;
+}
+
+.intro-translation {
+  grid-area: translation;
+  align-self: start;
+  margin-top: 56px;
+  text-align: center;
+  font-size: 20px;
+  line-height: 1.6;
+  font-weight: 500;
+  color: #454135;
 }
 
 .intro {
@@ -66,11 +77,15 @@ img {
   .container {
     max-width: 350px;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "intro" "controls" "stage";
+    grid-template-areas: "translation" "intro" "controls" "stage";
     gap: 28px;
   }
   .intro {
     text-align: center;
+  }
+  .intro-translation {
+    margin-top: 0;
+    font-size: 16px;
   }
   .intro h1 {
     font-size: clamp(36px, 9vw, 48px);
