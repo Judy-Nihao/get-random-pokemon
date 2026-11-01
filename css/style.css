@@ -134,10 +134,14 @@ img {
   .intro-translation {
     margin-bottom: 12px;
     margin-left: 0;
-    font-size: 16px;
+    font-size: 14px;
   }
   .intro h1 {
-    font-size: clamp(28px, 6vw, 36px);
+    font-size: clamp(16px, 5.5vw, 22px);
+    white-space: nowrap;
+  }
+  .intro h1 br {
+    display: none;
   }
 }
 .flip {

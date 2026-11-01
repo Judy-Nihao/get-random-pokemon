@@ -125,15 +125,21 @@ img {
     height: 44px;
     margin: 0;
     padding: 0;
-    span { display: none; }
+    span {
+      display: none;
+    }
   }
   .intro-translation {
     margin-bottom: 12px;
     margin-left: 0;
-    font-size: 16px;
+    font-size: 14px;
   }
   .intro h1 {
-    font-size: clamp(28px, 6vw, 36px);
+    font-size: clamp(16px, 5.5vw, 22px);
+    white-space: nowrap;
+    br {
+      display: none;
+    }
   }
 }
 
