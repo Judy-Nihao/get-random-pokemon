@@ -41,9 +41,9 @@ img {
 .intro-panel {
   grid-area: intro-panel;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 36px;
+  gap: 24px;
   min-width: 0;
 }
 .intro-translation {
@@ -56,11 +56,12 @@ img {
   color: #454135;
 }
 .intro {
-  align-self: stretch;
+  flex: 1;
+  min-width: 0;
   text-align: left;
 }
 .intro h1 {
-  font-size: clamp(48px, 5.8vw, 88px);
+  font-size: clamp(36px, 4.8vw, 72px);
   line-height: 1.06;
   letter-spacing: -0.035em;
   font-style: italic;
@@ -72,12 +73,17 @@ img {
   min-width: 0;
 }
 .controls {
-  align-self: flex-start;
+  flex: 0 0 120px;
   text-align: center;
   width: 120px;
   max-width: 100%;
 }
 @media (max-width: 800px) {
+  .intro-panel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 36px;
+  }
   .container {
     width: 100%;
     max-width: 382px;
@@ -94,6 +100,7 @@ img {
     font-size: clamp(36px, 9vw, 48px);
   }
   .controls {
+    flex: none;
     align-self: center;
   }
 }
