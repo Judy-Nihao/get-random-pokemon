@@ -59,7 +59,6 @@ img {
 }
 
 .card.active {
-  -webkit-transform: rotateY(180deg);
   transform: rotateY(180deg);
 }
 
@@ -76,7 +75,8 @@ img {
   max-width: 240px;
   height: 220px;
   flex-shrink: 0;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 
 .card > .hp,
@@ -103,7 +103,6 @@ img {
   flex-direction: column;
   opacity: 0;
   z-index: 1;
-  -webkit-transform: rotateY(-180deg);
   transform: rotateY(-180deg);
   transition-delay: 0;
 }
@@ -115,7 +114,8 @@ img {
   height: 80px;
 }
 .card .poke-entry .img-wrap img {
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
   margin: 0;
   width: 65px;
 }
@@ -312,6 +312,4 @@ img {
 .download:hover {
   background-color: #6839CE;
   color: white;
-}
-
-/*# sourceMappingURL=style.css.map */
+}/*# sourceMappingURL=style.css.map */
