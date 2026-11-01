@@ -129,8 +129,9 @@ function generateCard(data,id){
         <span>HP</span>
         ${hp}
     </p>    
-    <img src="${imgSrc}" alt="pokemon pic" >
-    <h2 class="poke-name" data-pokemonId="${id}">${pokeName}</h2>
+    <img class="pokemon-image" src="${imgSrc}" alt="${pokeName}" >
+    <h2 class="poke-name" data-pokemonId="${id}"><span>${pokeName}</span></h2>
+    <h2 class="pokeNameTC"><span></span></h2>
     <div class="types">
     </div>
     <div class="stats">
@@ -153,6 +154,7 @@ function generateCard(data,id){
 
     //用抓到的屬性色碼改變卡片背景漸層色
     styleCard(themeColor);
+    fitPokemonNames();
 
     // 取得對應的寶可夢中文名稱
     // 先渲染出來卡片之後，才去抓 html 上面的的寶可夢 id 來用
@@ -173,9 +175,8 @@ function generateCard(data,id){
 // 名單索引值 0 是妙蛙種子，妙蛙種子 data-pokemonId 是 1
 // 所以要取中文名稱的陣列名單時，索引值要 id-1 才會是正確的對象名稱
 function createChinese(names){
-    // 在畫面上創造 h2 元素並給class
-    let pokeNameTC = document.createElement("H2")
-    pokeNameTC.className = "pokeNameTC";
+    // 中文載入前已保留名稱區，避免插入元素造成版面位移。
+    let pokeNameTC = card.querySelector(".pokeNameTC span");
 
     // 抓取 DOM 上面的寶可夢 data-pokemonId
     let pokeNameEN = document.querySelector(".poke-name");
@@ -185,9 +186,27 @@ function createChinese(names){
     let name = names[nameID-1]
     pokeNameTC.textContent = name;
     
-    // 把寶可夢中文添加在寶可夢英文後面
-    pokeNameEN.after(pokeNameTC);
+    fitPokemonNames();
 }
+
+// 保留完整名稱；固定名稱區放不下時，逐步縮小字級，不裁切文字。
+function fitPokemonNames(){
+    card.querySelectorAll(".poke-name, .pokeNameTC").forEach((element) => {
+        const text = element.querySelector("span");
+        const isEnglish = element.classList.contains("poke-name");
+        const minimumSize = isEnglish ? 16 : 14;
+        let size = isEnglish ? 28 : 20;
+        element.style.fontSize = `${size}px`;
+        while (size > minimumSize && (text.offsetHeight > Math.min(element.clientHeight, size * 1.2 * 2) + 1 || text.scrollWidth > element.clientWidth)) {
+            size -= 0.5;
+            element.style.fontSize = `${size}px`;
+        }
+    });
+}
+
+// 字型載入及視窗尺寸變動後重新量測，避免以替代字型的尺寸定案。
+document.fonts.ready.then(fitPokemonNames);
+window.addEventListener("resize", fitPokemonNames);
 
 
 // 寶可夢屬性，type 是用 createElement 處理，如果只有1個 type 就只會生出1個span
