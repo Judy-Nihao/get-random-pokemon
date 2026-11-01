@@ -13,7 +13,7 @@ html {
 body {
   width: 100%;
   min-height: 100vh;
-  background-color: #F3EEDD;
+  background-color: #f3eedd;
   padding: 32px 20px;
   display: flex;
   justify-content: center;
@@ -29,30 +29,36 @@ img {
   max-width: 960px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 350px;
-  grid-template-areas: "intro stage" "controls stage";
+  grid-template-areas: "intro-panel stage";
   column-gap: clamp(32px, 4vw, 56px);
   row-gap: 24px;
   align-items: center;
 }
 
+.intro-panel {
+  grid-area: intro-panel;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  min-width: 0;
+}
+
 .intro-translation {
-  position: absolute;
-  bottom: 100%;
-  left: 0;
   width: 100%;
   margin-bottom: 16px;
-  text-align: center;
-  font-size: 20px;
+  margin-left: 8px;
+  text-align: left;
+  font-size: 32px;
   line-height: 1.6;
   font-weight: 500;
   color: #454135;
 }
 
 .intro {
-  position: relative;
-  grid-area: intro;
-  align-self: end;
-  text-align: center;
+  width: fit-content;
+  max-width: 100%;
+  text-align: left;
 }
 
 .intro h1 {
@@ -61,6 +67,7 @@ img {
   letter-spacing: -0.035em;
   font-style: italic;
   font-weight: 800;
+  text-align: left;
 }
 
 .card-stage {
@@ -69,33 +76,24 @@ img {
 }
 
 .controls {
-  grid-area: controls;
-  align-self: start;
   text-align: center;
-  justify-self: center;
   width: 220px;
+  max-width: 100%;
 }
 
 @media (max-width: 800px) {
   .container {
     max-width: 350px;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "intro" "controls" "stage";
+    grid-template-areas: "intro-panel" "stage";
     gap: 28px;
   }
-  .intro {
-    text-align: center;
-  }
   .intro-translation {
-    position: static;
     margin-bottom: 12px;
     font-size: 16px;
   }
   .intro h1 {
     font-size: clamp(36px, 9vw, 48px);
-  }
-  .controls {
-    justify-self: center;
   }
 }
 .flip {
@@ -486,17 +484,17 @@ img {
 }
 
 .generate {
-  position: relative;
-  padding-top: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 .ball-guide {
-  position: absolute;
-  top: 0;
-  left: 50%;
+  display: block;
+  flex-shrink: 0;
   width: 120px;
   height: 72px;
-  transform: translateX(-50%);
   stroke: #82765b;
   stroke-width: 2;
   stroke-linecap: round;
@@ -552,7 +550,7 @@ img {
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  border: 3px solid #CAC8C8;
+  border: 3px solid #cac8c8;
   background-color: white;
   top: 50%;
   left: 50%;
@@ -597,7 +595,8 @@ img {
     animation-timing-function: ease-out;
   }
 }
-.btn:hover, .btn:focus-visible {
+.btn:hover,
+.btn:focus-visible {
   animation-play-state: paused;
 }
 
@@ -619,7 +618,8 @@ button:disabled {
   cursor: default;
 }
 
-.download:disabled, .flip:disabled {
+.download:disabled,
+.flip:disabled {
   opacity: 0.45;
 }
 
@@ -631,7 +631,9 @@ button:disabled {
   animation: skeleton-pulse 800ms ease-in-out infinite alternate;
 }
 
-.download, .flip, .retry {
+.download,
+.flip,
+.retry {
   transition: background-color 160ms ease-out, color 160ms ease-out;
 }
 
@@ -644,12 +646,15 @@ button:disabled {
 }
 
 @media (hover: hover) {
-  .download:hover:not(:disabled), .flip:hover:not(:disabled), .retry:hover:not(:disabled) {
+  .download:hover:not(:disabled),
+  .flip:hover:not(:disabled),
+  .retry:hover:not(:disabled) {
     background-color: #e5deca;
     color: #202024;
   }
 }
-.download:active:not(:disabled), .flip:active:not(:disabled) {
+.download:active:not(:disabled),
+.flip:active:not(:disabled) {
   background-color: #d9d0b8;
 }
 
@@ -658,7 +663,10 @@ button:disabled {
     animation: none;
     scale: 1;
   }
-  .btn, .download, .flip, .retry {
+  .btn,
+  .download,
+  .flip,
+  .retry {
     transition: none;
   }
   .btn.is-loading .ball-button {
