@@ -17,6 +17,12 @@
     <title>寶可夢圖鑑卡</title>
 </head>
 <body>
+    <aside id="toast" class="toast" data-kind="success" aria-label="通知" hidden>
+        <i id="toast-icon" class="bx bx-check-circle" aria-hidden="true"></i>
+        <p id="toast-message" role="status" aria-live="polite" aria-atomic="true"></p>
+        <button id="retry" class="retry" type="button" hidden>重試</button>
+        <button id="toast-close" class="toast-close" type="button" aria-label="關閉通知"><i class="bx bx-x" aria-hidden="true"></i></button>
+    </aside>
     <main class="container">
         <header class="intro">
             <h1 lang="en">Click to Get<br>a Pokemon</h1>
@@ -35,8 +41,7 @@
                     <span class="ball-button" aria-hidden="true"></span>
                 </button>
             </div>
-            <p id="load-status" class="load-status" role="status" aria-live="polite">載入中…</p>
-            <button id="retry" class="retry" type="button" hidden>重試</button>
+            <p id="load-status" class="sr-only" role="status" aria-live="polite">載入中…</p>
         </section>
     </main>
 </body>

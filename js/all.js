@@ -39,6 +39,45 @@ let capturing = false;
 let skeletonTimer;
 const status = document.querySelector("#load-status");
 const retry = document.querySelector("#retry");
+const toast = document.querySelector("#toast");
+const toastMessage = document.querySelector("#toast-message");
+const toastIcon = document.querySelector("#toast-icon");
+const toastClose = document.querySelector("#toast-close");
+let toastTimer;
+let toastDuration = 0;
+
+function hideToast(){
+    clearTimeout(toastTimer);
+    if (toast.contains(document.activeElement)) btn.focus();
+    toast.hidden = true;
+    toastMessage.textContent = "";
+}
+
+function scheduleToastDismiss(){
+    clearTimeout(toastTimer);
+    if (toastDuration && !toast.matches(":hover") && !toast.contains(document.activeElement)) {
+        toastTimer = setTimeout(hideToast, toastDuration);
+    }
+}
+
+function notify(message, kind = "success", canRetry = false){
+    clearTimeout(toastTimer);
+    toast.dataset.kind = kind;
+    toastIcon.className = kind === "success" ? "bx bx-check-circle" : "bx bx-error-circle";
+    retry.hidden = !canRetry;
+    toast.hidden = false;
+    toastMessage.textContent = message;
+    toastDuration = kind === "error" ? 0 : kind === "warning" ? 10000 : 6000;
+    scheduleToastDismiss();
+}
+
+toastClose.addEventListener("click", hideToast);
+toast.addEventListener("pointerenter", () => clearTimeout(toastTimer));
+toast.addEventListener("pointerleave", scheduleToastDismiss);
+toast.addEventListener("focusin", () => clearTimeout(toastTimer));
+toast.addEventListener("focusout", () => setTimeout(scheduleToastDismiss, 0));
+toast.addEventListener("keydown", event => { if (event.key === "Escape") hideToast(); });
+
 let namesPromise;
 const fallbackDescription = "關於這隻寶可夢還有許多未知";
 const missingImage = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="240" height="220" viewBox="0 0 240 220"><rect width="240" height="220" rx="24" fill="#eeeae0"/><text x="120" y="130" text-anchor="middle" font-size="64" fill="#63563a">?</text></svg>');
@@ -71,7 +110,7 @@ function setLoading(value){
     clearTimeout(skeletonTimer);
     if (value) {
         status.textContent = "載入中…";
-        retry.hidden = true;
+        hideToast();
         skeletonTimer = setTimeout(showSkeleton, card.querySelector(".card-front") ? 180 : 0);
     } else {
         card.classList.remove("is-loading");
@@ -125,11 +164,13 @@ async function getPokeData(){
             : null;
         card.setAttribute("data-entryText", description || fallbackDescription);
         generateCard(data, id, names.status === "fulfilled" ? names.value : [], image || missingImage);
-        status.textContent = !image ? "圖片暫時無法載入，已顯示替代圖。" : names.status !== "fulfilled" ? "中文名稱暫時無法載入。" : "";
+        status.textContent = "";
+        if (!image) notify("圖片暫時無法載入，已顯示替代圖。", "warning");
+        else if (names.status !== "fulfilled") notify("中文名稱暫時無法載入。", "warning");
     } catch (error) {
         if (request === latestRequest) {
-            status.textContent = "載入失敗，請再試一次。";
-            retry.hidden = false;
+            status.textContent = "";
+            notify("載入失敗，請再試一次。", "error", true);
             if (!card.querySelector(".card-front")) card.innerHTML = '<div class="card-empty">暫時找不到寶可夢<br>請點選重試</div>';
         }
     } finally {
@@ -333,6 +374,7 @@ async function block_capture(){
     capturing = true;
     syncControls();
     download.setAttribute("aria-busy", "true");
+    hideToast();
     status.textContent = "正在準備正反面圖片…";
     try {
         await document.fonts.ready;
@@ -356,9 +398,11 @@ async function block_capture(){
             link.click();
             link.remove();
         });
-        status.textContent = "已送出正反面下載；若瀏覽器詢問，請允許多個檔案下載。";
+        status.textContent = "";
+        notify("已送出正反面下載。若瀏覽器詢問，請允許多個檔案下載。");
     } catch (error) {
-        status.textContent = "圖片產生失敗，請再試一次。";
+        status.textContent = "";
+        notify("圖片產生失敗，請再點 Download 重試。", "error");
     } finally {
         capturing = false;
         download.removeAttribute("aria-busy");
