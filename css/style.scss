@@ -90,17 +90,55 @@ img {
     width: 100%;
     max-width: 382px;
     padding-inline: 16px;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 44px;
     grid-template-rows: auto;
-    grid-template-areas: "intro-panel" "stage";
-    gap: 28px;
+    grid-template-areas:
+      "intro download"
+      "flip flip"
+      "card card"
+      "controls controls";
+    column-gap: 12px;
+    row-gap: 16px;
+    align-items: start;
+  }
+  // 手機版讓原有元素直接參與同一個格線，不複製卡片與操作狀態。
+  .intro-panel,
+  .card-stage {
+    display: contents;
+  }
+  .container .intro {
+    grid-area: intro;
+  }
+  .container .card {
+    grid-area: card;
+  }
+  .container .flip {
+    grid-area: flip;
+    justify-self: center;
+    margin: 0;
+  }
+  .container .controls {
+    grid-area: controls;
+    justify-self: center;
+    margin-top: 12px;
+  }
+  .container .download {
+    grid-area: download;
+    justify-self: end;
+    align-self: start;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    padding: 0;
+    span { display: none; }
   }
   .intro-translation {
     margin-bottom: 12px;
+    margin-left: 0;
     font-size: 16px;
   }
   .intro h1 {
-    font-size: clamp(36px, 9vw, 48px);
+    font-size: clamp(28px, 6vw, 36px);
   }
 }
 
