@@ -350,7 +350,7 @@ img {
   margin-bottom: 40px;
 }
 .types span {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 400;
   padding: 5px 20px;
   border-radius: 20px;
@@ -388,15 +388,15 @@ img {
   margin: 0 auto;
   border-radius: 50%;
   border: 2px solid rgba(0, 0, 0, 0.6);
-  box-shadow: inset -10px 0px 0 0px rgba(0, 0, 0, 0.2), 0 5px 15px white;
+  box-shadow: inset -10px 0px 0 0px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(55, 48, 34, 0.12);
   cursor: pointer;
-  transition: scale 0.1s ease-out, transform 0.2s ease-out;
+  transition: transform 180ms ease-out;
 }
 .btn:hover {
-  scale: 0.9;
+  transform: translateY(-3px) rotate(-8deg);
 }
 .btn:active {
-  transform: rotate(120deg);
+  transform: translateY(1px) scale(0.96);
 }
 .btn::before {
   content: " ";
@@ -451,6 +451,62 @@ img {
 }
 .download i {
   font-size: 20px;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible {
+  outline: 3px solid #63563a;
+  outline-offset: 5px;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+.download:disabled, .flip:disabled {
+  opacity: 0.45;
+}
+
+.btn:disabled {
+  transform: none;
+}
+
+.btn.is-loading .ball-button {
+  animation: skeleton-pulse 800ms ease-in-out infinite alternate;
+}
+
+.download, .flip, .retry {
+  transition: background-color 160ms ease-out, color 160ms ease-out;
+}
+
+.retry {
+  font-size: 14px;
+  border: 1px solid #a39b87;
+  border-radius: 8px;
+  background: transparent;
+  color: #454135;
+}
+
+@media (hover: hover) {
+  .download:hover:not(:disabled), .flip:hover:not(:disabled), .retry:hover:not(:disabled) {
+    background-color: #e5deca;
+    color: #202024;
+  }
+}
+.download:active:not(:disabled), .flip:active:not(:disabled) {
+  background-color: #d9d0b8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .download, .flip, .retry {
+    transition: none;
+  }
+  .btn.is-loading .ball-button {
+    animation: none;
+  }
 }
 
 /*# sourceMappingURL=style.css.map */

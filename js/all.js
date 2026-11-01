@@ -35,6 +35,7 @@ const download = document.querySelector(".download");
 const flip = document.querySelector("#flip");
 let latestRequest = 0;
 let loading = false;
+let capturing = false;
 let skeletonTimer;
 const status = document.querySelector("#load-status");
 const retry = document.querySelector("#retry");
@@ -77,9 +78,15 @@ function setLoading(value){
         card.querySelector(".card-skeleton")?.remove();
     }
     card.setAttribute("aria-busy", String(value));
-    btn.disabled = value;
-    download.disabled = value || !card.querySelector(".card-front");
-    flip.disabled = value || !card.querySelector(".card-front");
+    btn.classList.toggle("is-loading", value);
+    syncControls();
+}
+
+function syncControls(){
+    const ready = Boolean(card.querySelector(".card-front"));
+    btn.disabled = loading || capturing;
+    download.disabled = loading || capturing || !ready;
+    flip.disabled = loading || capturing || !ready;
 }
 
 function showSkeleton(){
@@ -95,7 +102,7 @@ function showSkeleton(){
 retry.addEventListener("click", getPokeData);
 
 async function getPokeData(){
-    if (loading) return;
+    if (loading || capturing) return;
     const request = ++latestRequest;
     const id = Math.floor(Math.random() * 250) + 1;
     setCardFlipped(false);
@@ -251,8 +258,20 @@ function styleCard(color){
     card.querySelectorAll(".types span").forEach(
         (typeText) => {
             typeText.style.backgroundColor = color;
+            typeText.style.color = readableTypeColor(color);
         });
 };
+
+// 以相對亮度比較深色與白色文字，保留屬性底色。
+function readableTypeColor(hex){
+    const channels = hex.slice(1).match(/.{2}/g).map(value => {
+        const channel = parseInt(value, 16) / 255;
+        return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+    });
+    const luminance = channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+    // 深字使用純黑，確保任一底色至少有一組達到 4.5:1。
+    return (luminance + 0.05) / 0.05 >= 1.05 / (luminance + 0.05) ? "#000" : "#fff";
+}
 
 // 卡片點擊後就翻面＋把寶可夢敘述 Entry Text 顯示在背面
 function setCardFlipped(flipped){
@@ -268,10 +287,10 @@ function setCardFlipped(flipped){
 }
 
 card.addEventListener("click", ()=>{
-    if (!loading && card.querySelector(".card-front")) setCardFlipped(!card.classList.contains("active"));
+    if (!loading && !capturing && card.querySelector(".card-front")) setCardFlipped(!card.classList.contains("active"));
 });
 flip.addEventListener("click", () => {
-    if (!loading && card.querySelector(".card-front")) setCardFlipped(!card.classList.contains("active"));
+    if (!loading && !capturing && card.querySelector(".card-front")) setCardFlipped(!card.classList.contains("active"));
 });
 
 // 抽卡時回到正面；舊請求完成時不覆蓋目前這一隻的資料。
@@ -285,10 +304,15 @@ btn.addEventListener("click", function(){
 // 備註：html2canvas 無法擷取到偽元素 content 的快照，所以內容不要放在偽元素裡面。
 download.addEventListener("click", block_capture);
 
-function block_capture() {
-     if (loading || !card.querySelector(".card-front")) return;
+async function block_capture() {
+     if (loading || capturing || !card.querySelector(".card-front")) return;
+     capturing = true;
+     syncControls();
+     download.setAttribute("aria-busy", "true");
+     status.textContent = "正在準備下載…";
      const captureBack = card.classList.contains("active");
-     html2canvas(document.querySelector("#card"),{
+     try {
+     const canvas = await html2canvas(document.querySelector("#card"),{
         //要加上下面這兩條屬性才抓得到寶可夢角色圖片，因為圖片是跨網域載入的
         // 只在擷取副本攤平選定的表面，不影響畫面上的翻面動畫。
         onclone: (clonedDocument) => {
@@ -306,15 +330,21 @@ function block_capture() {
         },
         allowTaint:false, 
         useCORS	:true
-    })
-    .then(function (canvas) {
+    });
       const a = document.createElement("a");
       a.href = canvas
         .toDataURL("image/jpeg", 1) //數字參數是quality圖片品質，1是最高
         .replace("image/jpeg", "image/octet-stream");
       a.download = "pokemonCard.jpg";
       a.click();
-    });
+      status.textContent = "已送出下載。";
+     } catch (error) {
+         status.textContent = "下載失敗，請再試一次。";
+     } finally {
+         capturing = false;
+         download.removeAttribute("aria-busy");
+         syncControls();
+     }
   }  
 
 
