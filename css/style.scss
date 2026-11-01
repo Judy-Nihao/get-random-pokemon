@@ -34,8 +34,8 @@ img {
   padding-inline: 32px;
   display: grid;
   grid-template-columns: 350px minmax(0, max-content);
-  grid-template-rows: var(--card-height) auto;
-  grid-template-areas: "stage intro-panel" "stage .";
+  grid-template-rows: var(--card-height);
+  grid-template-areas: "stage intro-panel";
   column-gap: 40px;
   row-gap: 0;
   align-items: center;
@@ -73,6 +73,7 @@ img {
 }
 .card-stage {
   grid-area: stage;
+  position: relative;
   min-width: 0;
 }
 .controls {
@@ -94,7 +95,6 @@ img {
     grid-template-rows: auto;
     grid-template-areas:
       "intro download"
-      "flip flip"
       "card card"
       "controls controls";
     column-gap: 12px;
@@ -111,11 +111,6 @@ img {
   }
   .container .card {
     grid-area: card;
-  }
-  .container .flip {
-    grid-area: flip;
-    justify-self: center;
-    margin: 0;
   }
   .container .controls {
     grid-area: controls;
@@ -142,22 +137,33 @@ img {
   }
 }
 
+// 視覺提示改由卡片動作呈現；鍵盤聚焦時仍提供可見的翻面按鈕。
 .flip {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.flip:focus-visible {
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  width: auto;
+  height: 44px;
+  padding: 8px 12px;
+  margin: 0;
+  clip-path: none;
   display: flex;
-  justify-content: center;
   align-items: center;
   gap: 6px;
-  margin: 12px auto 0;
-  min-height: 44px;
-  padding: 8px 12px;
-  border: 0;
-  background: transparent;
-  color: #635e51;
-  font-size: 14px;
-  cursor: pointer;
-  i {
-    font-size: 20px;
-  }
+  background: white;
+  color: #202024;
+  border-radius: 6px;
 }
 
 .card {
@@ -708,4 +714,21 @@ button:disabled {
   .btn.is-loading .ball-button {
     animation: none;
   }
+}
+
+.card:not(.active):not([aria-busy="true"]):not(.is-capturing) .card-rotator {
+  animation: var(--card-peek, card-peek 6s ease-in-out infinite);
+}
+.card:hover .card-rotator,
+.card-stage:focus-within .card-rotator {
+  animation-play-state: paused;
+}
+@keyframes card-peek {
+  0%, 72%, 100% { rotate: y 0deg; }
+  81% { rotate: y -6deg; }
+  90% { rotate: y 3deg; }
+  96% { rotate: y 0deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card { --card-peek: none; }
 }

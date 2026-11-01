@@ -123,6 +123,7 @@ function setLoading(value){
 
 function syncControls(){
     const ready = Boolean(card.querySelector(".card-front"));
+    card.classList.toggle("is-capturing", capturing);
     btn.disabled = loading || capturing;
     download.disabled = loading || capturing || !ready;
     flip.disabled = loading || capturing || !ready;
@@ -356,6 +357,8 @@ async function captureCardFace(captureBack){
             clone.style.perspective = "none";
             const rotator = clone.querySelector(".card-rotator");
             rotator.style.transition = "none";
+            rotator.style.animation = "none";
+            rotator.style.rotate = "none";
             rotator.style.transform = "none";
             clone.querySelectorAll(".card-face").forEach((face) => {
                 const visible = face.classList.contains("poke-entry") === captureBack;
