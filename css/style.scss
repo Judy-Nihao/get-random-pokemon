@@ -28,14 +28,16 @@ img {
 }
 
 .container {
+  --card-height: 640px;
   width: fit-content;
   max-width: min(992px, 100%);
   padding-inline: 32px;
   display: grid;
   grid-template-columns: 350px minmax(0, max-content);
-  grid-template-areas: "stage intro-panel";
-  column-gap: 24px;
-  row-gap: 24px;
+  grid-template-rows: var(--card-height) auto;
+  grid-template-areas: "stage intro-panel" "stage .";
+  column-gap: 40px;
+  row-gap: 0;
   align-items: center;
 }
 .intro-panel {
@@ -89,6 +91,7 @@ img {
     max-width: 382px;
     padding-inline: 16px;
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
     grid-template-areas: "intro-panel" "stage";
     gap: 28px;
   }
@@ -122,7 +125,7 @@ img {
 .card {
   position: relative;
   width: 100%;
-  height: 640px;
+  height: var(--card-height);
   perspective: 1200px;
   cursor: pointer;
 }
