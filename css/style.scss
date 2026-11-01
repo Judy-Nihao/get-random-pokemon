@@ -302,7 +302,7 @@ img{
 
 .generate{
     position: relative;
-    padding-top: 80px;
+    padding-top: 88px;
 }
 .ball-guide{
     position: absolute;
@@ -334,14 +334,14 @@ img{
     0 8px 16px rgba(55, 48, 34, 0.12);
     cursor: pointer;
     transition: transform 180ms ease-out;
-    animation: ball-float 1.8s ease-in-out infinite;
+    animation: ball-bounce 1.8s infinite;
 
     &:hover{
-        transform: translateY(-3px) rotate(-8deg);
+        transform: rotate(-8deg);
     }
 
     &:active{
-        transform: translateY(1px) scale(.96);
+        transform: scale(.96);
     }
 
     &::before {
@@ -402,12 +402,26 @@ img{
     i{ font-size: 20px; }
 }
 
-@keyframes ball-float{
-    0%, 100%{ translate: 0 0; }
-    50%{ translate: 0 -10px; }
+@keyframes ball-bounce{
+    0%, 60%, 100%{
+        scale: 1;
+        animation-timing-function: cubic-bezier(.2, .8, .3, 1);
+    }
+    18%{
+        scale: 1.07;
+        animation-timing-function: cubic-bezier(.6, 0, .8, .4);
+    }
+    32%{
+        scale: .97;
+        animation-timing-function: cubic-bezier(.2, .8, .3, 1);
+    }
+    45%{
+        scale: 1.025;
+        animation-timing-function: ease-out;
+    }
 }
 .btn:hover, .btn:focus-visible{ animation-play-state: paused; }
-.btn:disabled{ animation: none; translate: 0 0; }
+.btn:disabled{ animation: none; scale: 1; }
 
 button{ -webkit-tap-highlight-color: transparent; }
 button:focus-visible{
@@ -428,7 +442,7 @@ button:disabled{ cursor: default; }
 }
 .download:active:not(:disabled), .flip:active:not(:disabled){ background-color: #d9d0b8; }
 @media (prefers-reduced-motion: reduce){
-    .btn{ animation: none; translate: 0 0; }
+    .btn{ animation: none; scale: 1; }
     .btn, .download, .flip, .retry{ transition: none; }
     .btn.is-loading .ball-button{ animation: none; }
 }

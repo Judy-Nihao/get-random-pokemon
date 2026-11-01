@@ -378,7 +378,7 @@ img {
 
 .generate {
   position: relative;
-  padding-top: 80px;
+  padding-top: 88px;
 }
 
 .ball-guide {
@@ -407,13 +407,13 @@ img {
   box-shadow: inset -10px 0px 0 0px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(55, 48, 34, 0.12);
   cursor: pointer;
   transition: transform 180ms ease-out;
-  animation: ball-float 1.8s ease-in-out infinite;
+  animation: ball-bounce 1.8s infinite;
 }
 .btn:hover {
-  transform: translateY(-3px) rotate(-8deg);
+  transform: rotate(-8deg);
 }
 .btn:active {
-  transform: translateY(1px) scale(0.96);
+  transform: scale(0.96);
 }
 .btn::before {
   content: " ";
@@ -470,12 +470,22 @@ img {
   font-size: 20px;
 }
 
-@keyframes ball-float {
-  0%, 100% {
-    translate: 0 0;
+@keyframes ball-bounce {
+  0%, 60%, 100% {
+    scale: 1;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.3, 1);
   }
-  50% {
-    translate: 0 -10px;
+  18% {
+    scale: 1.07;
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
+  }
+  32% {
+    scale: 0.97;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+  45% {
+    scale: 1.025;
+    animation-timing-function: ease-out;
   }
 }
 .btn:hover, .btn:focus-visible {
@@ -484,7 +494,7 @@ img {
 
 .btn:disabled {
   animation: none;
-  translate: 0 0;
+  scale: 1;
 }
 
 button {
@@ -537,7 +547,7 @@ button:disabled {
 @media (prefers-reduced-motion: reduce) {
   .btn {
     animation: none;
-    translate: 0 0;
+    scale: 1;
   }
   .btn, .download, .flip, .retry {
     transition: none;
