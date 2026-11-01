@@ -172,7 +172,7 @@ img {
   position: relative;
   width: 100%;
   height: var(--card-height);
-  perspective: 1200px;
+  perspective: 900px;
   cursor: pointer;
 }
 
@@ -715,7 +715,7 @@ button:disabled {
   }
 }
 .card:not(.active):not([aria-busy=true]):not(.is-capturing) .card-rotator {
-  animation: var(--card-peek, card-peek 6s ease-in-out infinite);
+  animation: var(--card-peek, card-peek 2s ease-in-out infinite);
 }
 
 .card:hover .card-rotator,
@@ -728,10 +728,10 @@ button:disabled {
     rotate: y 0deg;
   }
   81% {
-    rotate: y -6deg;
+    rotate: y -16deg;
   }
   90% {
-    rotate: y 3deg;
+    rotate: y 8deg;
   }
   96% {
     rotate: y 0deg;
