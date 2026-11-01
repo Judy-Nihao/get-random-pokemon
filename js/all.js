@@ -32,90 +32,87 @@ const quoteUrl = "https://pokeapi.co/api/v2/pokemon-species/"
 const card = document.querySelector("#card");
 const btn = document.querySelector("#btn");
 const download = document.querySelector(".download");
-let pokeNameTC= []; 
 let latestRequest = 0;
+let loading = false;
+let namesPromise;
+const fallbackDescription = "關於這隻寶可夢還有許多未知";
+const missingImage = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="240" height="220" viewBox="0 0 240 220"><rect width="240" height="220" rx="24" fill="#eeeae0"/><text x="120" y="130" text-anchor="middle" font-size="64" fill="#63563a">?</text></svg>');
 
-function getPokeData(){
+function loadNames(){
+    if (!namesPromise) namesPromise = axios.get("js/zh-hant.json", {timeout: 10000})
+        .then(res => res.data).catch(error => { namesPromise = null; throw error; });
+    return namesPromise;
+}
+
+function loadImage(source){
+    return new Promise(resolve => {
+        if (!source) return resolve(null);
+        const image = new Image();
+        const timer = setTimeout(() => finish(null), 10000);
+        function finish(result){
+            clearTimeout(timer);
+            image.onload = image.onerror = null;
+            resolve(result);
+        }
+        image.crossOrigin = "anonymous";
+        image.onload = () => finish(source);
+        image.onerror = () => finish(null);
+        image.src = source;
+    });
+}
+
+function setLoading(value){
+    loading = value;
+    card.setAttribute("aria-busy", String(value));
+    btn.disabled = value;
+    download.disabled = value || !card.querySelector(".card-front");
+}
+
+async function getPokeData(){
+    if (loading) return;
     const request = ++latestRequest;
-    card.setAttribute("data-entryText", "關於這隻寶可夢還有許多未知");
-    // 產生介於 1~300 之間的隨機整數當作id  
-    // random 會從 0~300之間隨機產生浮點數，包含 0 不包含 300
-    // floor 會回傳「小於等於」所給數字的最接近整數
-    // 0.00001 會變成 0。0+1=1
-    // 299.999 會變成 299。299+1=300
-    let id = Math.floor(Math.random() * 250) + 1;
-    // console.log(id);
-    // 結合 pokeapi 和 id 組出每一隻寶可夢的的專屬請求網址
-    const finalUrl = url + id;
-    // console.log(finalUrl);
-    const finalQuoteUrl = quoteUrl + id;
- 
-    //========= 取得寶可夢英文資料 =========
-    axios
-    .get(finalUrl)
-    .then((res) => {
+    const id = Math.floor(Math.random() * 250) + 1;
+    setCardFlipped(false);
+    setLoading(true);
+    try {
+        const [pokemon, species, names] = await Promise.allSettled([
+            axios.get(url + id, {timeout: 10000}),
+            axios.get(quoteUrl + id, {timeout: 10000}),
+            loadNames()
+        ]);
+        if (pokemon.status !== "fulfilled") throw pokemon.reason;
+        const data = pokemon.value.data;
+        const artwork = data.sprites.other?.["official-artwork"]?.front_default;
+        const primary = data.sprites.other?.dream_world?.front_default;
+        const image = await loadImage(primary || artwork) ||
+            (primary && artwork && primary !== artwork ? await loadImage(artwork) : null);
         if (request !== latestRequest) return;
-        const pokemonData = res.data;
-        generateCard(pokemonData, id);    
-        })
-    .catch((err) => {
-        console.log(err);
-    });
-
-    // ========= 取得同一隻寶可夢的敘述 =========
-    axios
-    .get(finalQuoteUrl)
-    .then((res) => {
-        if (request !== latestRequest) return;
-        const quote = res.data;
-        getQuote(quote);
-    })
-    .catch((err) => {
-        console.log(err);
-    });
-}
-
-//取得同一隻寶可夢敘述
-function getQuote(quote){
-    let entryArr = quote.flavor_text_entries;
-
-    //找到中文的敘述是在索引值第幾個
-    let result = entryArr.map(function(item, index) {
-        return item.language.name.toLowerCase();
-    }).indexOf("zh-hant");
-
-    let entryText;
-
-    if(result == -1){
-        entryText = "關於這隻寶可夢還有許多未知"
-    }else{
-        entryText = entryArr[result].flavor_text;
+        const description = species.status === "fulfilled"
+            ? species.value.data.flavor_text_entries.find(entry => entry.language.name.toLowerCase() === "zh-hant")?.flavor_text
+            : null;
+        card.setAttribute("data-entryText", description || fallbackDescription);
+        generateCard(data, id, names.status === "fulfilled" ? names.value : [], image || missingImage);
+    } catch (error) {
+        if (request === latestRequest) console.error("Unable to load Pokemon", error);
+    } finally {
+        if (request === latestRequest) setLoading(false);
     }
-
-    // let entryText = entryArr[result].flavor_text;
-
-    card.setAttribute("data-entryText", entryText);
-    const description = card.querySelector(".poke-entry > p");
-    if (description) description.textContent = entryText;
-    //如果遇到 flavor_text_entries 資料為空[]的狀態，由於沒有任何敘述可以尋找，map()方法會回傳空陣列[]，indexOf()找不到"zh-Hant"，回傳 -1，就填入 if 條件的文字
-    //如果遇到 flavor_text_entries 不為空，但是剛好這隻寶可夢沒有中文敘述，indexOf()找不到"zh-Hant"會回傳 -1，就填入 if 條件的文字。
 }
-
 
 // 渲染寶可夢卡片
-function generateCard(data,id){
+function generateCard(data, id, names, imageSource){
     //抓取必要資料並存進變數中
     // console.log(data);
     const hp = data.stats[0].base_stat;
     // 有些寶可夢沒有 dream_world 版本的圖片，路徑是 null，此時就改採用另一個物件屬性的圖片路徑
-    const imgSrc = data.sprites.other.dream_world.front_default || data.sprites.other.official-artwork.front_default;
+    const imgSrc = imageSource;
     //寶可夢字母首字大寫：只對第一個字母轉大寫，從第二個字母開始的剩餘字母，則用slice(索引值)淺拷貝一個陣列出來再拼接回去
     const pokeName = data.name[0].toUpperCase() + data.name.slice(1);
     const statAttack = data.stats[1].base_stat;
     const statDefense = data.stats[2].base_stat;
     const statSpeed = data.stats[5].base_stat;
-    const gifFront = data.sprites.versions["generation-v"]["black-white"]["animated"]["front_default"];
-    const gifBack = data.sprites.versions["generation-v"]["black-white"]["animated"]["back_default"]
+    const gifFront = data.sprites.versions?.["generation-v"]?.["black-white"]?.animated?.front_default;
+    const gifBack = data.sprites.versions?.["generation-v"]?.["black-white"]?.animated?.back_default;
 
     
     //根據寶可夢的「第一個」屬性，對照相同屬性名稱的卡片主題色
@@ -126,8 +123,8 @@ function generateCard(data,id){
     <div class="card-face poke-entry" aria-hidden="true">
         <p></p>
         <div class="img-wrap">
-            <img src="${gifFront}" alt="">
-            <img src="${gifBack}" alt="">
+            ${gifFront ? `<img src="${gifFront}" alt="正面動態圖">` : ""}
+            ${gifBack ? `<img src="${gifBack}" alt="背面動態圖">` : ""}
         </div>
     </div>
     <div class="card-face card-front">
@@ -165,19 +162,7 @@ function generateCard(data,id){
     styleCard(themeColor);
     fitPokemonNames();
 
-    // 取得對應的寶可夢中文名稱
-    // 先渲染出來卡片之後，才去抓 html 上面的的寶可夢 id 來用
-    // 這組 axios 若放在最前面的 getPokeData()裡面執行，由於英文資料要去外部叫，中文名單則是在本地端，中文會比較快出現，
-    // 速度差會導致卡片還沒渲染出來，就想要用 querySelector 找元素，會找不到 DOM元素，這樣比對名單會出錯。
-   axios
-   .get("js/zh-hant.json")
-   .then((res) => {
-       nameTC = res.data;
-       createChinese(nameTC);
-   })
-   .catch((err) => {
-       console.log(err);
-   });
+    createChinese(names);
 }
 
 // 名單陣列索引值是從0開始，但是寶可夢清單是從1號開始排
@@ -192,7 +177,7 @@ function createChinese(names){
     let nameID = pokeNameEN.getAttribute("data-pokemonId");
 
     // 寶可夢 id -1 才是正確的同一隻寶可夢中文清單索引值
-    let name = names[nameID-1]
+    let name = names[nameID-1] || "名稱暫缺";
     pokeNameTC.textContent = name;
     
     fitPokemonNames();
@@ -251,7 +236,7 @@ function setCardFlipped(flipped){
 }
 
 card.addEventListener("click", ()=>{
-    if (card.querySelector(".card-front")) setCardFlipped(!card.classList.contains("active"));
+    if (!loading && card.querySelector(".card-front")) setCardFlipped(!card.classList.contains("active"));
 });
 card.addEventListener("keydown", (event)=>{
     if (event.key === "Enter" || event.key === " ") {
@@ -272,7 +257,7 @@ btn.addEventListener("click", function(){
 download.addEventListener("click", block_capture);
 
 function block_capture() {
-     if (!card.querySelector(".card-front")) return;
+     if (loading || !card.querySelector(".card-front")) return;
      const captureBack = card.classList.contains("active");
      html2canvas(document.querySelector("#card"),{
         //要加上下面這兩條屬性才抓得到寶可夢角色圖片，因為圖片是跨網域載入的
