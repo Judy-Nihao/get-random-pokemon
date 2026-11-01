@@ -25,15 +25,13 @@ img {
 }
 
 .container {
-  width: -moz-fit-content;
   width: fit-content;
   max-width: min(992px, 100%);
   padding-inline: 32px;
   display: grid;
-  grid-template-columns: minmax(0, max-content) 350px;
-  grid-template-areas: "intro-panel stage";
-  -moz-column-gap: 24px;
-       column-gap: 24px;
+  grid-template-columns: 350px minmax(0, max-content);
+  grid-template-areas: "stage intro-panel";
+  column-gap: 24px;
   row-gap: 24px;
   align-items: center;
 }
@@ -260,7 +258,6 @@ img {
   top: max(20px, env(safe-area-inset-top));
   left: 50%;
   transform: translateX(-50%);
-  width: -moz-max-content;
   width: max-content;
   max-width: min(560px, 100% - 32px);
   display: flex;
@@ -384,8 +381,7 @@ img {
   max-width: 240px;
   height: 220px;
   flex-shrink: 0;
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 
 .card-front > .hp,
@@ -425,8 +421,7 @@ img {
   height: 80px;
 }
 .card .poke-entry .img-wrap img {
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
   margin: 0;
   width: 65px;
 }
@@ -678,4 +673,6 @@ button:disabled {
   .btn.is-loading .ball-button {
     animation: none;
   }
-}/*# sourceMappingURL=style.css.map */
+}
+
+/*# sourceMappingURL=style.css.map */
