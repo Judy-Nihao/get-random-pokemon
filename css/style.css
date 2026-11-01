@@ -26,11 +26,11 @@ img {
 
 .container {
   width: 100%;
-  max-width: 1120px;
+  max-width: 960px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 350px;
   grid-template-areas: "intro stage" "controls stage";
-  column-gap: clamp(48px, 7vw, 120px);
+  column-gap: clamp(32px, 4vw, 56px);
   row-gap: 24px;
   align-items: center;
 }
@@ -83,7 +83,7 @@ img {
   justify-content: center;
   align-items: center;
   gap: 6px;
-  margin: 0 0 12px auto;
+  margin: 0 auto 12px;
   min-height: 44px;
   padding: 8px 12px;
   border: 0;
