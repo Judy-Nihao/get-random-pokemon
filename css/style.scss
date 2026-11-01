@@ -16,7 +16,7 @@ body{
     width: 100%;
     min-height: 100vh;
     background-color: #F3EEDD;
-    padding: 20px;
+    padding: 32px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,9 +27,35 @@ img{
 }
 
 .container{
-    position: relative;
-    width: 350px;
-    // outline: 1px solid red;
+    width: 100%;
+    max-width: 1120px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 350px;
+    grid-template-areas: "intro stage" "controls stage";
+    column-gap: clamp(48px, 7vw, 120px);
+    row-gap: 48px;
+    align-items: center;
+}
+.intro{ grid-area: intro; align-self: end; }
+.intro h1{
+    font-size: clamp(48px, 5.8vw, 88px);
+    line-height: 1.06;
+    letter-spacing: -0.035em;
+    font-style: italic;
+    font-weight: 800;
+}
+.card-stage{ grid-area: stage; min-width: 0; }
+.controls{ grid-area: controls; align-self: start; text-align: center; justify-self: start; width: 220px; }
+@media (max-width: 800px){
+    .container{
+        max-width: 350px;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: "intro" "stage" "controls";
+        gap: 28px;
+    }
+    .intro{ text-align: center; }
+    .intro h1{ font-size: clamp(36px, 9vw, 48px); }
+    .controls{ justify-self: center; }
 }
 
 .flip{
@@ -275,7 +301,7 @@ img{
 // btn 和 text 都被包在 generat 裡面，看起來會像是點擊 btn 觸發文字
 // 但其實是點到父層的 generate
 .generate{
-    margin-top: 30px;
+    margin-top: 0;
 }
 
 .generate:active{
@@ -304,8 +330,8 @@ img{
 .btn{
     position: relative;
     display: block;
-    width: 100px;
-    height: 100px;
+    width: 144px;
+    height: 144px;
     background: linear-gradient(180deg, #f71b1b 50%, #f7f7f7 50%);
     margin: 0 auto;
     border-radius: 50%;

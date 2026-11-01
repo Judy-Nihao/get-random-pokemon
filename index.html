@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,59 +17,24 @@
     <title>寶可夢圖鑑卡</title>
 </head>
 <body>
-    <div class="container">
-        <button class="download"><i class='bx bx-download' ></i>Download Card</button>
-        <div id="card" class="card" role="button" tabindex="0" aria-label="顯示寶可夢背面" data-entryText="關於這隻寶可夢還有許多未知">
-                <!-- <div class="poke-entry">
-                    <p>最近發表了聚集大量皮卡丘來建造發電廠的計畫。</p>
-                    <div class="img-wrap">
-                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif" alt="">
-                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/25.gif" alt="">
-                    </div>
-                </div>
-                <p class="hp">
-                <span>HP</span>
-                35
-            </p>
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/25.svg" alt="a pokemon pic">
-
-            <h2 class="poke-name">Sample Name</h2>
-            <div class="types">
-                <span>electric</span>
-                <span>屬性</span>
+    <main class="container">
+        <header class="intro">
+            <h1 lang="en">Click to Get<br>a Pokemon</h1>
+        </header>
+        <section class="card-stage" aria-label="寶可夢卡片">
+            <div id="card" class="card" role="button" tabindex="0" aria-label="顯示寶可夢背面" aria-busy="true" data-entryText="關於這隻寶可夢還有許多未知"></div>
+            <div class="flip"><span>點擊卡片翻轉</span><img src="img/flip_FILL0_wght400_GRAD0_opsz48 (1).png" alt=""></div>
+        </section>
+        <section class="controls" aria-label="卡片操作">
+            <div class="generate">
+                <button id="btn" class="btn" type="button" aria-label="Get a random Pokemon" disabled>
+                    <span class="ball-button" aria-hidden="true"></span>
+                </button>
             </div>
-            <div class="stats">
-                <div>
-                    <h3>55</h3>
-                    <p>攻擊</p>
-                </div>
-                <div>
-                    <h3>40</h3>
-                    <p>防禦</p>
-                </div>
-                <div>
-                    <h3>90</h3>
-                    <p>速度</p>
-                </div>
-            </div> -->
-        </div>
-        <p id="load-status" class="load-status" role="status" aria-live="polite"></p>
-        <button id="retry" class="retry" type="button" hidden>重試</button>
-        <div class="flip"><span>點擊卡片翻轉</span><img src="img/flip_FILL0_wght400_GRAD0_opsz48 (1).png" alt=""></div>
-        <div class="generate">
-            <button id="btn" class="btn">
-                <div class="ball-button"> </div>
-                <!-- <span>Get a Pokemon!</span> -->
-            </button>   
-            <div class="text-gotcha">
-                <i class='bx bxs-chevrons-up'></i>
-                <p>Click to Get a Pokemon</p>    
-            </div>
-            <!-- <button class="download"><i class='bx bx-download' ></i>Download Card</button> -->
-        </div>
-        
-    </div>
+            <button class="download" type="button" disabled><i class="bx bx-download" aria-hidden="true"></i><span>Download Card</span></button>
+            <p id="load-status" class="load-status" role="status" aria-live="polite">載入中…</p>
+            <button id="retry" class="retry" type="button" hidden>重試</button>
+        </section>
+    </main>
 </body>
 </html>
-
-
