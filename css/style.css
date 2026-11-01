@@ -79,16 +79,21 @@ img {
   }
 }
 .flip {
-  text-align: center;
-  margin-top: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 6px;
+  margin: 12px auto 0;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 0;
+  background: transparent;
+  color: #635e51;
+  font-size: 14px;
+  cursor: pointer;
 }
-.flip img {
-  width: 24px;
-  vertical-align: top;
-  margin-left: 10px;
+.flip i {
+  font-size: 20px;
 }
 
 .card {
@@ -374,24 +379,6 @@ img {
   margin-top: 0;
 }
 
-.generate:active .text-gotcha {
-  color: black;
-  scale: 1.25;
-}
-
-.text-gotcha {
-  font-family: "Source Code Pro";
-  font-style: italic;
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-align: center;
-  padding: 4px 8px;
-  margin: 0 auto;
-  margin-top: 20px;
-  transition: all 0.2s ease-in-out;
-}
-
 .btn {
   position: relative;
   display: block;
@@ -448,27 +435,22 @@ img {
 }
 
 .download {
-  display: block;
-  margin: 0 auto;
-  margin-top: 20px;
-  padding: 10px 14px;
-  font-size: 10px;
-  border: none;
-  border-radius: 20px;
-  background-color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 20px auto 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #454135;
   cursor: pointer;
-  margin-bottom: 25px;
-  transition: all 0.2s ease-out;
 }
 .download i {
-  position: relative;
-  top: 3px;
-  font-size: 16px;
-  margin-right: 8px;
-}
-.download:hover {
-  background-color: #6839CE;
-  color: white;
+  font-size: 20px;
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -32,6 +32,7 @@ const quoteUrl = "https://pokeapi.co/api/v2/pokemon-species/"
 const card = document.querySelector("#card");
 const btn = document.querySelector("#btn");
 const download = document.querySelector(".download");
+const flip = document.querySelector("#flip");
 let latestRequest = 0;
 let loading = false;
 let skeletonTimer;
@@ -78,6 +79,7 @@ function setLoading(value){
     card.setAttribute("aria-busy", String(value));
     btn.disabled = value;
     download.disabled = value || !card.querySelector(".card-front");
+    flip.disabled = value || !card.querySelector(".card-front");
 }
 
 function showSkeleton(){
@@ -260,18 +262,16 @@ function setCardFlipped(flipped){
     if (!front || !back) return;
     front.setAttribute("aria-hidden", String(flipped));
     back.setAttribute("aria-hidden", String(!flipped));
-    card.setAttribute("aria-label", flipped ? "顯示寶可夢正面" : "顯示寶可夢背面");
+    flip.setAttribute("aria-label", flipped ? "顯示寶可夢正面" : "顯示寶可夢背面");
+    flip.querySelector("span").textContent = flipped ? "翻回正面" : "翻面";
     back.querySelector("p").textContent = card.getAttribute("data-entryText") || "關於這隻寶可夢還有許多未知";
 }
 
 card.addEventListener("click", ()=>{
     if (!loading && card.querySelector(".card-front")) setCardFlipped(!card.classList.contains("active"));
 });
-card.addEventListener("keydown", (event)=>{
-    if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        card.click();
-    }
+flip.addEventListener("click", () => {
+    if (!loading && card.querySelector(".card-front")) setCardFlipped(!card.classList.contains("active"));
 });
 
 // 抽卡時回到正面；舊請求完成時不覆蓋目前這一隻的資料。
