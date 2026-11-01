@@ -33,7 +33,7 @@ img{
     grid-template-columns: minmax(0, 1fr) 350px;
     grid-template-areas: "intro stage" "controls stage";
     column-gap: clamp(48px, 7vw, 120px);
-    row-gap: 48px;
+    row-gap: 24px;
     align-items: center;
 }
 .intro{ grid-area: intro; align-self: end; }
@@ -50,7 +50,7 @@ img{
     .container{
         max-width: 350px;
         grid-template-columns: minmax(0, 1fr);
-        grid-template-areas: "intro" "stage" "controls";
+        grid-template-areas: "intro" "controls" "stage";
         gap: 28px;
     }
     .intro{ text-align: center; }
@@ -63,7 +63,7 @@ img{
     justify-content: center;
     align-items: center;
     gap: 6px;
-    margin: 12px auto 0;
+    margin: 0 0 12px auto;
     min-height: 44px;
     padding: 8px 12px;
     border: 0;
@@ -300,7 +300,23 @@ img{
 }
 
 
-.generate{ margin-top: 0; }
+.generate{
+    position: relative;
+    padding-top: 80px;
+}
+.ball-guide{
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 120px;
+    height: 72px;
+    transform: translateX(-50%);
+    stroke: #82765b;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+}
 
 //寶貝球按鈕
 .btn{
@@ -318,6 +334,7 @@ img{
     0 8px 16px rgba(55, 48, 34, 0.12);
     cursor: pointer;
     transition: transform 180ms ease-out;
+    animation: ball-float 3s ease-in-out infinite;
 
     &:hover{
         transform: translateY(-3px) rotate(-8deg);
@@ -369,7 +386,7 @@ img{
 
 
 .download{
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
@@ -377,13 +394,20 @@ img{
     margin: 20px auto 8px;
     padding: 8px 12px;
     font-size: 14px;
-    border: 0;
+    border: 1px solid rgba(99, 86, 58, .24);
     border-radius: 8px;
     background: transparent;
     color: #454135;
     cursor: pointer;
     i{ font-size: 20px; }
 }
+
+@keyframes ball-float{
+    0%, 100%{ translate: 0 0; }
+    50%{ translate: 0 -7px; }
+}
+.btn:hover, .btn:focus-visible{ animation-play-state: paused; }
+.btn:disabled{ animation: none; translate: 0 0; }
 
 button{ -webkit-tap-highlight-color: transparent; }
 button:focus-visible{
@@ -404,6 +428,7 @@ button:disabled{ cursor: default; }
 }
 .download:active:not(:disabled), .flip:active:not(:disabled){ background-color: #d9d0b8; }
 @media (prefers-reduced-motion: reduce){
+    .btn{ animation: none; translate: 0 0; }
     .btn, .download, .flip, .retry{ transition: none; }
     .btn.is-loading .ball-button{ animation: none; }
 }
