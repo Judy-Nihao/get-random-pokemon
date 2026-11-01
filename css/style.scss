@@ -29,13 +29,17 @@ img {
 
 .container {
   width: 100%;
-  max-width: 960px;
+  max-width: 1024px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 350px;
+  grid-template-columns: minmax(0, 1fr) 382px;
   grid-template-areas: "intro-panel stage";
   column-gap: clamp(32px, 4vw, 56px);
   row-gap: 24px;
   align-items: center;
+}
+.intro-panel,
+.card-stage {
+  padding-inline: 16px;
 }
 .intro-panel {
   grid-area: intro-panel;
@@ -78,6 +82,10 @@ img {
   max-width: 100%;
 }
 @media (max-width: 800px) {
+  .intro-panel,
+  .card-stage {
+    padding-inline: 0;
+  }
   .container {
     max-width: 350px;
     grid-template-columns: minmax(0, 1fr);
