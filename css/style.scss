@@ -717,17 +717,15 @@ button:disabled {
 }
 
 .card:not(.active):not([aria-busy="true"]):not(.is-capturing) .card-rotator {
-  animation: var(--card-peek, card-peek 2s ease-in-out infinite);
+  animation: var(--card-peek, card-peek 4s ease-in-out infinite);
 }
 .card:hover .card-rotator,
 .card-stage:focus-within .card-rotator {
   animation-play-state: paused;
 }
 @keyframes card-peek {
-  0%, 72%, 100% { rotate: y 0deg; }
-  81% { rotate: y -16deg; }
-  90% { rotate: y 8deg; }
-  96% { rotate: y 0deg; }
+  0%, 20%, 90%, 100% { rotate: y 0deg; }
+  55% { rotate: y -12deg; }
 }
 @media (prefers-reduced-motion: reduce) {
   .card { --card-peek: none; }
